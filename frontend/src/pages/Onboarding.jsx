@@ -137,11 +137,21 @@ const Onboarding = () => {
         </div>
         <div className="space-y-3">
           <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">Poids (kg)</label>
-          <input type="number" {...register('weight')} className="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold" />
+          <input 
+            type="number" 
+            {...register('weight', { required: true, min: 2, max: 500 })} 
+            className={`w-full px-5 py-4 bg-gray-50 dark:bg-slate-800 border ${errors.weight ? 'border-red-500' : 'border-gray-100 dark:border-slate-700'} rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold`} 
+          />
+          {errors.weight && <p className="text-[10px] text-red-500 font-bold px-1">Poids invalide (2-500kg)</p>}
         </div>
         <div className="space-y-3">
           <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">Taille (cm)</label>
-          <input type="number" {...register('height')} className="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold" />
+          <input 
+            type="number" 
+            {...register('height', { required: true, min: 30, max: 250 })} 
+            className={`w-full px-5 py-4 bg-gray-50 dark:bg-slate-800 border ${errors.height ? 'border-red-500' : 'border-gray-100 dark:border-slate-700'} rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold`} 
+          />
+          {errors.height && <p className="text-[10px] text-red-500 font-bold px-1">Taille invalide (30-250cm)</p>}
         </div>
       </div>
       <div className="grid md:grid-cols-2 gap-6">

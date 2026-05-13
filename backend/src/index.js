@@ -115,6 +115,39 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message || "Erreur serveur inattendue." });
 });
 
-server.listen(PORT, () => {
+// Fonction d'auto-seed pour l'admin au démarrage
+const prisma = require('./config/db');
+const bcrypt = require('bcryptjs');
+
+const autoSeedAdmin = async () => {
+  try {
+    const email = 'admin@yboost.ma';
+    const password = 'admin@1234';
+    const pepper = process.env.PASSWORD_PEPPER || '';
+
+    const existingAdmin = await prisma.user.findUnique({ where: { email } });
+    if (!existingAdmin) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password + pepper, salt);
+
+      await prisma.user.create({
+        data: {
+          email,
+          first_name: 'Admin',
+          last_name: 'Yboost',
+          password: hashedPassword,
+          role: 'admin',
+          is_profile_completed: true,
+        },
+      });
+      console.log('✅ Compte Administrateur créé par défaut (admin@yboost.ma)');
+    }
+  } catch (error) {
+    console.error('⚠️ Erreur lors de l\'auto-seed admin:', error);
+  }
+};
+
+server.listen(PORT, async () => {
+  await autoSeedAdmin();
   console.log(`Serveur démarré sur http://localhost:${PORT} 🛡️ (Sécurisé OWASP)`);
 });
