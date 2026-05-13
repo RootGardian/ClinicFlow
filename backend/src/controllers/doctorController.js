@@ -73,14 +73,17 @@ exports.setAvailabilities = async (req, res) => {
     
     const newAvailabilities = await prisma.availability.createMany({
       data: availabilities.map(avail => ({
-        ...avail,
+        day_of_week: parseInt(avail.day_of_week),
+        start_time: avail.start_time,
+        end_time: avail.end_time,
         doctor_id: doctor.id
       }))
     });
 
     res.json(newAvailabilities);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la mise à jour des disponibilités.' });
+    console.error("Erreur setAvailabilities:", error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour des disponibilités.', error: error.message });
   }
 };
 
