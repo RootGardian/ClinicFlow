@@ -72,10 +72,10 @@ const AiAssistant = () => {
 
     try {
       const history = messages.map(m => ({ role: m.type === 'user' ? 'user' : 'assistant', content: m.text }));
-      const res = await api.post('/ai/analyze-symptoms', { 
-        symptoms: textToSend, 
+      const res = await api.post('/ai/analyze-symptoms', {
+        symptoms: textToSend,
         history,
-        lang: i18n.language 
+        lang: i18n.language
       });
       setAnalysis(res.data);
       setMessages(prev => [...prev, { id: Date.now() + 1, type: 'bot', text: res.data.summary, analysis: res.data }]);
@@ -87,7 +87,9 @@ const AiAssistant = () => {
         setCooldown(data.retryAfter || 60);
         setMessages(prev => [...prev, { id: Date.now() + 1, type: 'bot', text: t('ai_rate_limit'), isRateLimit: true }]);
       } else {
-        setMessages(prev => [...prev, { id: Date.now() + 1, type: 'bot', text: data?.error || "Erreur de connexion." }]);
+        const errorMsg = data?.error || data?.message || "L'assistant est momentanément indisponible.";
+        setMessages(prev => [...prev, { id: Date.now() + 1, type: 'bot', text: errorMsg }]);
+        toast.error(errorMsg);
       }
     } finally {
       setLoading(false);
@@ -95,8 +97,9 @@ const AiAssistant = () => {
   };
 
   const handleQuickSymptom = (label) => {
+    if (loading || cooldown > 0) return;
     setInput(label);
-    setTimeout(() => handleSend(label), 100);
+    handleSend(label);
   };
 
   const formatTime = (s) => s >= 60 ? `${Math.floor(s / 60)}m ${(s % 60).toString().padStart(2, '0')}s` : `${s}s`;
@@ -226,18 +229,18 @@ const AiAssistant = () => {
                     <div className={`flex gap-3 max-w-[85%] ${msg.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                       {/* Avatar */}
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${msg.type === 'user' ? 'bg-slate-800 dark:bg-slate-200 dark:text-slate-900 text-white' :
-                          msg.isRateLimit ? 'bg-amber-500 text-white' :
-                            'bg-gradient-to-br from-primary-500 to-primary-700 text-white'
+                        msg.isRateLimit ? 'bg-amber-500 text-white' :
+                          'bg-gradient-to-br from-primary-500 to-primary-700 text-white'
                         }`}>
                         {msg.type === 'user' ? <User size={16} /> : msg.isRateLimit ? <Clock size={16} /> : <Sparkles size={16} />}
                       </div>
 
                       {/* Message Bubble */}
                       <div className={`rounded-2xl shadow-sm ${msg.type === 'user'
-                          ? 'bg-slate-800 dark:bg-slate-200 dark:text-slate-900 text-white px-5 py-3.5 rounded-tr-sm'
-                          : msg.isRateLimit
-                            ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-100 px-5 py-3.5 rounded-tl-sm'
-                            : 'bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 text-gray-800 dark:text-slate-100 px-5 py-4 rounded-tl-sm'
+                        ? 'bg-slate-800 dark:bg-slate-200 dark:text-slate-900 text-white px-5 py-3.5 rounded-tr-sm'
+                        : msg.isRateLimit
+                          ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-100 px-5 py-3.5 rounded-tl-sm'
+                          : 'bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 text-gray-800 dark:text-slate-100 px-5 py-4 rounded-tl-sm'
                         }`}>
                         <p className="text-sm leading-relaxed">{msg.text}</p>
 
@@ -274,8 +277,8 @@ const AiAssistant = () => {
                             {/* Urgency Badge - Only if medical context */}
                             {msg.analysis.urgencyLevel && msg.analysis.suggestedSpecialty !== 'N/A' && (
                               <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${msg.analysis.urgencyLevel === 'high' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800' :
-                                  msg.analysis.urgencyLevel === 'medium' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800' :
-                                    'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800'
+                                msg.analysis.urgencyLevel === 'medium' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800' :
+                                  'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800'
                                 }`}>
                                 <div className={`w-2 h-2 rounded-full ${msg.analysis.urgencyLevel === 'high' ? 'bg-red-500 animate-pulse' :
                                   msg.analysis.urgencyLevel === 'medium' ? 'bg-orange-500' : 'bg-blue-500'
@@ -358,8 +361,8 @@ const AiAssistant = () => {
             onClick={() => handleSend()}
             disabled={!input.trim() || loading || cooldown > 0}
             className={`p-3 rounded-xl transition-all ${input.trim() && cooldown === 0
-                ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-600/25'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600'
+              ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-600/25'
+              : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600'
               }`}
           >
             <Send size={18} />

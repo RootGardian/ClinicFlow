@@ -94,8 +94,9 @@ app.use('/api/auth/register', authLimiter);
 
 // Import des routes
 console.log(`[${new Date().toLocaleTimeString()}] Initialisation des services IA...`);
+const { protect } = require('./middlewares/authMiddleware');
 const aiController = require('./controllers/aiController');
-app.post('/api/ai/analyze-symptoms', aiController.analyzeSymptoms);
+app.post('/api/ai/analyze-symptoms', protect, aiController.analyzeSymptoms);
 app.get('/api/ai-test', (req, res) => res.json({ status: "ready" }));
 
 app.use('/api/auth', require('./routes/authRoutes'));
