@@ -2,14 +2,19 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, text, html, attachments }) => {
   try {
+    const port = parseInt(process.env.MAIL_PORT) || 587;
+
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST || 'smtp-relay.brevo.com',
-      port: process.env.MAIL_PORT || 587,
-      secure: process.env.MAIL_PORT == 465, // true pour 465, false pour les autres ports
+      port,
+      secure: port === 465, // true pour 465, false pour 587
       auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
       },
+      connectionTimeout: 10000, // 10s pour se connecter
+      greetingTimeout: 10000,   // 10s pour le handshake
+      socketTimeout: 15000,     // 15s pour l'envoi
     });
 
     const mailOptions = {
@@ -25,7 +30,7 @@ const sendEmail = async ({ to, subject, text, html, attachments }) => {
     console.log('Email envoyé:', info.messageId);
     return info;
   } catch (error) {
-    console.error('Erreur envoi email:', error);
+    console.error('Erreur envoi email:', error.message);
     throw error;
   }
 };
