@@ -4,22 +4,39 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, CreditCard, ArrowUpRight, ArrowDownRight, History, Loader2, ShieldCheck, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { io } from 'socket.io-client';
+
+const getSocketUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
+  return url.replace('/api', '');
+};
+const socket = io(getSocketUrl());
+
 const DoctorWallet = () => {
   const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchWallet = async () => {
+    try {
+      const res = await api.get('/doctor/wallet');
+      setData(res.data);
+    } catch (err) {
+      console.error("Erreur lors de la récupération du portefeuille:", err);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchWallet = async () => {
-      try {
-        const res = await api.get('/doctor/wallet');
-        setData(res.data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération du portefeuille:", err);
-      }
-      setLoading(false);
-    };
     fetchWallet();
+
+    socket.on('prescription_generated', () => {
+      fetchWallet();
+    });
+
+    return () => {
+      socket.off('prescription_generated');
+    };
   }, []);
 
   if (loading) return (

@@ -209,12 +209,37 @@ exports.createPrescription = async (req, res) => {
 
     const prescription = await prisma.prescription.create({
       data: {
-        consultation_id: consultation.id,
+        appointment_id: appointment.id,
         content: content,
-        qr_code_url: `/uploads/prescriptions/${pdfName}`, // On stocke le chemin relatif
-        is_digital_signed: true
+        advice: req.body.advice || '',
+        reference_num: `ORD-${Date.now()}`
       }
     });
+
+    // 2. Ajouter automatiquement l'ordonnance aux documents médicaux du patient
+    await prisma.medicalDocument.create({
+      data: {
+        patient_id: appointment.patient.id,
+        title: `Ordonnance - Dr. ${appointment.doctor.user.last_name}`,
+        file_url: `/uploads/prescriptions/${pdfName}`,
+        file_type: 'PDF'
+      }
+    });
+
+    // 3. Mettre à jour le statut du rendez-vous à "completed" pour que les gains soient calculés
+    await prisma.appointment.update({
+      where: { id: appointment.id },
+      data: { status: 'completed' }
+    });
+
+    // 4. Emettre un événement temps réel pour rafraîchir l'interface sans rechargement
+    if (req.app.get('io')) {
+      req.app.get('io').emit('prescription_generated', { 
+        appointmentId: appointment.id,
+        patientId: appointment.patient.id,
+        doctorId: appointment.doctor.id
+      });
+    }
 
     // Envoyer l'email au patient
     try {

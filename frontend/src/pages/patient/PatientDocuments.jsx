@@ -11,9 +11,19 @@ import {
   Loader2
 } from 'lucide-react';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
+
+import { io } from 'socket.io-client';
+
+const getSocketUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
+  return url.replace('/api', '');
+};
+const socket = io(getSocketUrl());
 
 const PatientDocuments = () => {
   const { t } = useTranslation();
+  const { user } = useAuth(); // Import useAuth to check patient id if needed, though we can just fetch
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -21,6 +31,16 @@ const PatientDocuments = () => {
 
   useEffect(() => {
     fetchDocuments();
+    
+    // Listen for real-time updates
+    socket.on('prescription_generated', (data) => {
+      // Refresh documents if this patient is concerned
+      fetchDocuments();
+    });
+
+    return () => {
+      socket.off('prescription_generated');
+    };
   }, []);
 
   const fetchDocuments = async () => {

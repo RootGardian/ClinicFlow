@@ -5,26 +5,44 @@ import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import { io } from 'socket.io-client';
+
+const getSocketUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
+  return url.replace('/api', '');
+};
+const socket = io(getSocketUrl());
+
 const DoctorDashboard = () => {
   const { t } = useTranslation();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchDashboardData = async () => {
+    try {
+      const res = await api.get('/doctor/appointments');
+      setAppointments(res.data);
+    } catch (err) {
+      console.error("Erreur lors de la récupération du dashboard:", err);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const res = await api.get('/doctor/appointments');
-        setAppointments(res.data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération du dashboard:", err);
-      }
-      setLoading(false);
-    };
     fetchDashboardData();
+
+    socket.on('prescription_generated', (data) => {
+      fetchDashboardData();
+    });
+
+    return () => {
+      socket.off('prescription_generated');
+    };
   }, []);
 
   const confirmedApps = appointments.filter(a => a.status === 'confirmed');
+  const completedApps = appointments.filter(a => a.status === 'completed');
   const pendingApps = appointments.filter(a => a.status === 'pending');
   
   const stats = [
@@ -51,7 +69,7 @@ const DoctorDashboard = () => {
     },
     { 
       label: t('estimated_earnings'), 
-      value: `${(confirmedApps.length * 300).toLocaleString()} MAD`, 
+      value: `${((confirmedApps.length + completedApps.length) * 300).toLocaleString()} MAD`, 
       icon: Wallet, 
       color: 'text-green-600 dark:text-green-400', 
       bg: 'bg-green-50 dark:bg-green-900/20' 

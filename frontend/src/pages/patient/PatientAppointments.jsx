@@ -5,23 +5,40 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { useTranslation } from 'react-i18next';
 
+import { io } from 'socket.io-client';
+
+const getSocketUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
+  return url.replace('/api', '');
+};
+const socket = io(getSocketUrl());
+
 const PatientAppointments = () => {
   const { t } = useTranslation();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchAppointments = async () => {
+    try {
+      const res = await api.get('/patient/appointments');
+      setAppointments(res.data);
+    } catch (err) {
+      console.error("Erreur lors de la récupération des rendez-vous:", err);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const res = await api.get('/patient/appointments');
-        setAppointments(res.data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des rendez-vous:", err);
-      }
-      setLoading(false);
-    };
     fetchAppointments();
+
+    socket.on('prescription_generated', (data) => {
+      fetchAppointments();
+    });
+
+    return () => {
+      socket.off('prescription_generated');
+    };
   }, []);
 
   const handleDownloadPrescription = async (app) => {

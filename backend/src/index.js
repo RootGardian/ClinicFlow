@@ -43,6 +43,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.set('io', io);
 // Sécurité : Ne pas exposer les documents médicaux statiquement pour respecter la triade CIA
 // Seuls les avatars sont publics pour l'interface
 app.use('/uploads/avatars', express.static(path.join(__dirname, '../uploads/avatars')));
