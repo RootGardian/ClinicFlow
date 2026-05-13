@@ -47,6 +47,12 @@ const AppointmentBooking = () => {
       const finalDate = new Date(selectedDate);
       finalDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
+      const now = new Date();
+      if (finalDate < now) {
+        toast.error("Vous ne pouvez pas prendre de rendez-vous dans le passé.");
+        return;
+      }
+
       await api.post('/patient/appointments', {
         doctor_id: parseInt(doctorId),
         appointment_date: finalDate,

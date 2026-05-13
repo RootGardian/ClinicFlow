@@ -111,6 +111,13 @@ const bookAppointment = async (req, res) => {
   try {
     const { doctor_id, appointment_date, type } = req.body;
     
+    const appDate = new Date(appointment_date);
+    const now = new Date();
+
+    if (appDate < now) {
+      return res.status(400).json({ message: "La date et l'heure du rendez-vous sont déjà passées." });
+    }
+
     const patient = await prisma.patient.findUnique({
       where: { user_id: req.user.id }
     });
@@ -123,7 +130,7 @@ const bookAppointment = async (req, res) => {
       data: {
         patient_id: patient.id,
         doctor_id: parseInt(doctor_id),
-        appointment_date: new Date(appointment_date),
+        appointment_date: appDate,
         type,
         status: 'pending'
       }

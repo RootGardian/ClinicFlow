@@ -311,11 +311,21 @@ exports.updateAppointmentStatus = async (req, res) => {
 
     const appointment = await prisma.appointment.update({
       where: { id: parseInt(id) },
-      data: { status }
+      data: { status },
+      include: { 
+        patient: { include: { user: true } },
+        doctor: { include: { user: true } }
+      }
     });
+
+    // Notifier le patient en temps réel
+    if (req.app.get('io')) {
+      req.app.get('io').emit('appointment_updated', appointment);
+    }
 
     res.json(appointment);
   } catch (error) {
+    console.error("Erreur updateAppointmentStatus:", error);
     res.status(500).json({ message: 'Erreur lors de la mise à jour du statut.' });
   }
 };

@@ -37,8 +37,14 @@ const PatientAppointments = () => {
       fetchAppointments();
     });
 
+    socket.on('appointment_updated', (data) => {
+      fetchAppointments();
+      toast.success(`Votre rendez-vous a été mis à jour : ${data.status}`);
+    });
+
     return () => {
       socket.off('prescription_generated');
+      socket.off('appointment_updated');
     };
   }, []);
 
