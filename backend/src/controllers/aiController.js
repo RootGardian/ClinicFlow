@@ -40,7 +40,14 @@ exports.analyzeSymptoms = async (req, res) => {
 
           if (patient) {
             // 3. Créer le rendez-vous
-            const appointmentDate = new Date(`${analysis.bookingDate}T${analysis.bookingTime}:00`);
+            const appointmentDate = new Date(`${analysis.bookingDate}T${analysis.bookingTime || '10:00'}:00`);
+            
+            if (isNaN(appointmentDate.getTime())) {
+              console.warn("[AI Booking] Date invalide:", analysis.bookingDate, analysis.bookingTime);
+              analysis.summary += `\n\n⚠️ Désolé, je n'ai pas pu valider l'horaire pour votre rendez-vous. Pourriez-vous préciser ?`;
+              return res.json(analysis);
+            }
+
             console.log("[AI Booking] Création RDV pour:", appointmentDate);
             
             const appointment = await prisma.appointment.create({
