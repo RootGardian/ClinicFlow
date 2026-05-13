@@ -13,7 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 const Onboarding = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,9 @@ const Onboarding = () => {
 
       const endpoint = user.role === 'doctor' ? '/doctor/profile' : '/patient/medical-info';
       await api.put(endpoint, data);
-      window.location.href = user.role === 'doctor' ? '/doctor/dashboard' : '/patient/search';
+      
+      // Mettre à jour l'état local pour déclencher la redirection automatique via le useEffect
+      setUser({ ...user, is_profile_completed: true });
     } catch (err) {
       console.error('FULL ERROR:', err);
       const msg = err.response?.data?.message || err.response?.data?.error || "Erreur inconnue";
