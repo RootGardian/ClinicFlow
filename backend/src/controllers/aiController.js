@@ -3,14 +3,14 @@ const prisma = require('../config/db');
 
 exports.analyzeSymptoms = async (req, res) => {
   try {
-    const { symptoms, lang } = req.body;
+    const { symptoms, history, lang } = req.body;
     const userId = req.user?.id;
     
     if (!symptoms) {
       return res.status(400).json({ message: "Les symptômes sont requis." });
     }
 
-    const analysis = await aiService.analyzeSymptoms(symptoms, lang || 'fr');
+    const analysis = await aiService.analyzeSymptoms(symptoms, lang || 'fr', history);
 
     // Gestion automatique du rendez-vous
     console.log("[AI Booking] Intent:", analysis.wantsToBook, "Date:", analysis.bookingDate, "Time:", analysis.bookingTime, "User:", userId);

@@ -71,7 +71,12 @@ const AiAssistant = () => {
     setLoading(true);
 
     try {
-      const res = await api.post('/ai/analyze-symptoms', { symptoms: textToSend, lang: i18n.language });
+      const history = messages.map(m => ({ role: m.type === 'user' ? 'user' : 'assistant', content: m.text }));
+      const res = await api.post('/ai/analyze-symptoms', { 
+        symptoms: textToSend, 
+        history,
+        lang: i18n.language 
+      });
       setAnalysis(res.data);
       setMessages(prev => [...prev, { id: Date.now() + 1, type: 'bot', text: res.data.summary, analysis: res.data }]);
       setCooldown(0);
@@ -248,22 +253,26 @@ const AiAssistant = () => {
                         {msg.analysis && (
                           <div className="mt-5 space-y-3">
                             {/* Specialty Card */}
-                            <div className="bg-gradient-to-r from-primary-50 to-primary-100/50 dark:from-primary-900/20 dark:to-primary-900/10 rounded-xl p-4 border border-primary-100 dark:border-primary-800">
-                              <p className="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider mb-2">{t('ai_result_specialty')}</p>
-                              <div className="flex items-center gap-3">
-                                {(() => { const Icon = getSpecialtyIcon(msg.analysis.suggestedSpecialty); return <div className="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shadow-sm border border-primary-100 dark:border-primary-800"><Icon size={20} className="text-primary-600 dark:text-primary-400" /></div>; })()}
-                                <span className="text-base font-bold text-gray-900 dark:text-white">{msg.analysis.suggestedSpecialty}</span>
+                            {msg.analysis.suggestedSpecialty && msg.analysis.suggestedSpecialty !== 'N/A' && msg.analysis.suggestedSpecialty !== 'Aucune' && (
+                              <div className="bg-gradient-to-r from-primary-50 to-primary-100/50 dark:from-primary-900/20 dark:to-primary-900/10 rounded-xl p-4 border border-primary-100 dark:border-primary-800">
+                                <p className="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider mb-2">{t('ai_result_specialty')}</p>
+                                <div className="flex items-center gap-3">
+                                  {(() => { const Icon = getSpecialtyIcon(msg.analysis.suggestedSpecialty); return <div className="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shadow-sm border border-primary-100 dark:border-primary-800"><Icon size={20} className="text-primary-600 dark:text-primary-400" /></div>; })()}
+                                  <span className="text-base font-bold text-gray-900 dark:text-white">{msg.analysis.suggestedSpecialty}</span>
+                                </div>
                               </div>
-                            </div>
+                            )}
 
                             {/* First Aid Card */}
-                            <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/10 rounded-xl p-4 border border-green-100 dark:border-green-800">
-                              <p className="text-[10px] font-bold text-green-500 dark:text-green-400 uppercase tracking-wider mb-2">{t('ai_result_first_aid')}</p>
-                              <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">{msg.analysis.firstAidAdvice}</p>
-                            </div>
+                            {msg.analysis.firstAidAdvice && msg.analysis.firstAidAdvice !== 'N/A' && msg.analysis.firstAidAdvice !== 'Aucun' && (
+                              <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/10 rounded-xl p-4 border border-green-100 dark:border-green-800">
+                                <p className="text-[10px] font-bold text-green-500 dark:text-green-400 uppercase tracking-wider mb-2">{t('ai_result_first_aid')}</p>
+                                <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">{msg.analysis.firstAidAdvice}</p>
+                              </div>
+                            )}
 
-                            {/* Urgency Badge */}
-                            {msg.analysis.urgencyLevel && (
+                            {/* Urgency Badge - Only if medical context */}
+                            {msg.analysis.urgencyLevel && msg.analysis.suggestedSpecialty !== 'N/A' && (
                               <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${msg.analysis.urgencyLevel === 'high' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800' :
                                   msg.analysis.urgencyLevel === 'medium' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800' :
                                     'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800'
