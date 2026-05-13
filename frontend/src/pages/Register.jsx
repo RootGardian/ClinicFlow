@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 const Register = () => {
   const { t } = useTranslation();
   const [error, setError] = useState('');
-  const { register: signup } = useAuth();
+  const { register: signup, login: loginUser } = useAuth();
   const navigate = useNavigate();
 
   const registerSchema = z.object({
@@ -33,7 +33,17 @@ const Register = () => {
     setError('');
     try {
       await signup(data);
-      navigate('/login');
+      // Auto-login après inscription
+      const response = await loginUser(data.email, data.password);
+      const { role, is_profile_completed } = response.user;
+
+      if (!is_profile_completed) {
+        navigate('/onboarding');
+      } else if (role === 'doctor') {
+        navigate('/doctor/dashboard');
+      } else {
+        navigate('/patient/search');
+      }
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || t('register_error_generic') || 'Erreur lors de l\'inscription');
