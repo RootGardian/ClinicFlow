@@ -5,7 +5,7 @@ exports.analyzeSymptoms = async (req, res) => {
   try {
     const { symptoms, history, lang } = req.body;
     const userId = req.user?.id;
-    
+
     if (!symptoms) {
       return res.status(400).json({ message: "Les symptômes sont requis." });
     }
@@ -23,7 +23,7 @@ exports.analyzeSymptoms = async (req, res) => {
 
         // Trouver un médecin de l'une des spécialités suggérées
         const doctor = await prisma.doctor.findFirst({
-          where: { 
+          where: {
             OR: searchTerms.map(term => ({
               specialty: { contains: term, mode: 'insensitive' }
             }))
@@ -33,70 +33,63 @@ exports.analyzeSymptoms = async (req, res) => {
 
         if (doctor) {
           console.log("[AI Booking] Docteur trouvé:", doctor.user.last_name);
-          // 2. Trouver le patient
           const patient = await prisma.patient.findUnique({
             where: { user_id: userId }
           });
 
           if (patient) {
-            // 3. Créer le rendez-vous
             const appointmentDate = new Date(`${analysis.bookingDate}T${analysis.bookingTime || '10:00'}:00`);
-            
+
             if (isNaN(appointmentDate.getTime())) {
-              console.warn("[AI Booking] Date invalide:", analysis.bookingDate, analysis.bookingTime);
-              analysis.summary += `\n\n⚠️ Désolé, je n'ai pas pu valider l'horaire pour votre rendez-vous. Pourriez-vous préciser ?`;
-              return res.json(analysis);
+              analysis.summary += `\n\n **Erreur de date** : Je n'ai pas pu comprendre l'horaire "${analysis.bookingTime}".`;
+            } else {
+              await prisma.appointment.create({
+                data: {
+                  patient_id: patient.id,
+                  doctor_id: doctor.id,
+                  appointment_date: appointmentDate,
+                  type: 'video',
+                  status: 'pending'
+                }
+              });
+
+              analysis.bookingSuccess = true;
+              analysis.bookedDoctor = `Dr. ${doctor.user.last_name}`;
+              analysis.summary += `\n\n✅ **Rendez-vous confirmé** avec le **${analysis.bookedDoctor}** (${doctor.specialty}) le **${analysis.bookingDate}** à **${analysis.bookingTime || '10:00'}**. Il apparaît maintenant dans votre liste de rendez-vous.`;
             }
-
-            console.log("[AI Booking] Création RDV pour:", appointmentDate);
-            
-            const appointment = await prisma.appointment.create({
-              data: {
-                patient_id: patient.id,
-                doctor_id: doctor.id,
-                appointment_date: appointmentDate,
-                type: 'video',
-                status: 'pending'
-              }
-            });
-
-            // 4. Enrichir la réponse de l'IA
-            analysis.bookingSuccess = true;
-            analysis.bookedDoctor = `Dr. ${doctor.user.last_name}`;
-            analysis.summary += `\n\n✅ **Rendez-vous confirmé** avec le **${analysis.bookedDoctor}** (${doctor.specialty}) le **${analysis.bookingDate}** à **${analysis.bookingTime}**.`;
-            console.log("[AI Booking] RDV créé avec succès !");
+          } else {
+            analysis.summary += `\n\n **Profil incomplet** : Vous devez compléter votre profil patient avant de pouvoir prendre rendez-vous.`;
           }
         } else {
-          console.warn("[AI Booking] Aucun docteur trouvé pour ces spécialités.");
-          analysis.summary += `\n\n⚠️ Je n'ai pas trouvé de médecin disponible immédiatement pour la spécialité suggérée (${analysis.suggestedSpecialty}).`;
+          analysis.summary += `\n\n **Indisponibilité** : Je n'ai pas trouvé de médecin disponible pour la spécialité "${analysis.suggestedSpecialty}" dans notre base actuelle.`;
         }
       } catch (bookError) {
         console.error("Erreur booking automatique IA:", bookError);
-        analysis.summary += `\n\nDésolé, je n'ai pas pu finaliser la réservation automatique.`;
+        analysis.summary += `\n\n **Erreur système** : Une erreur est survenue lors de la création du rendez-vous.`;
       }
     }
 
     res.json(analysis);
   } catch (error) {
     console.error("Erreur Analyse IA:", error);
-    
+
     const errorMsg = error.message || "";
-    
+
     // Détecter une erreur de quota (429)
     if (errorMsg.includes("429") || errorMsg.includes("quota")) {
       const retryMatch = errorMsg.match(/retry in ([\d.]+)s/i);
       const retrySeconds = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : 60;
-      
-      return res.status(429).json({ 
+
+      return res.status(429).json({
         message: "Quota IA dépassé temporairement.",
         retryAfter: retrySeconds,
         type: "RATE_LIMIT"
       });
     }
 
-    res.status(500).json({ 
+    res.status(500).json({
       message: "L'assistant IA est momentanément indisponible.",
-      error: errorMsg 
+      error: errorMsg
     });
   }
 };
