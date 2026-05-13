@@ -23,7 +23,8 @@ MISSION :
 
 CONSIGNES DE RÉPONSE :
 - Sois empathique, professionnel et rassurant.
-- Si c'est une simple discussion (ex: "Bonjour", "Comment ça va ?"), réponds normalement dans le champ "summary".
+- SI LE PATIENT DIT JUSTE "BONJOUR", "SALUT" OU POSE UNE QUESTION GÉNÉRALE : Réponds poliment dans "summary", et mets "suggestedSpecialty": "N/A" et "firstAidAdvice": "N/A".
+- NE RECOMMANDE JAMAIS de médecin (spécialité) tant que le patient n'a pas décrit un problème de santé ou des symptômes.
 - Si c'est médical, suggère UNE spécialité parmi : Médecin Généraliste, Cardiologue, Dermatologue, Gynécologue, Ophtalmologue, ORL, Rhumatologue, Neurologue, Pédiatre, Orthopédiste.
 
 DÉTECTION DE RENDEZ-VOUS (TRÈS IMPORTANT) :
@@ -34,8 +35,8 @@ DÉTECTION DE RENDEZ-VOUS (TRÈS IMPORTANT) :
 RÉPONDS UNIQUEMENT EN JSON :
 {
   "summary": "Ta réponse textuelle ou ton analyse ici (supporte le Markdown)",
-  "suggestedSpecialty": "Spécialité suggérée ou 'Médecin Généraliste' par défaut",
-  "firstAidAdvice": "Conseils pratiques ou 'N/A' si non médical",
+  "suggestedSpecialty": "La spécialité OU 'N/A' si pas de symptômes décrits",
+  "firstAidAdvice": "Conseils pratiques OU 'N/A' si non médical ou pas de symptômes",
   "urgencyLevel": "low|medium|high",
   "wantsToBook": true|false,
   "bookingDate": "YYYY-MM-DD ou null",
@@ -190,8 +191,8 @@ const analyzeSymptoms = async (userInput, lang = 'fr', history = []) => {
     if (!result) {
       result = { 
         summary: text.substring(0, 300), 
-        suggestedSpecialty: "Médecin Généraliste", 
-        firstAidAdvice: "Consultez un médecin généraliste pour un examen complet.", 
+        suggestedSpecialty: "N/A", 
+        firstAidAdvice: "N/A", 
         urgencyLevel: "low" 
       };
     }
