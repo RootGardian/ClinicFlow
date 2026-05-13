@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, User, Mail, Phone, Calendar, ChevronRight, Loader2, Filter } from 'lucide-react';
+import { Search, User, Mail, Phone, Calendar, ChevronRight, Loader2, Filter, X, FileText, Activity } from 'lucide-react';
 import { motion as m, AnimatePresence } from 'framer-motion';
 import api from '../../utils/api';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ const DoctorPatients = () => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPatient, setSelectedPatient] = useState(null);
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -116,7 +117,10 @@ const DoctorPatients = () => {
                   </div>
                 </div>
 
-                <button className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-sm font-black hover:bg-primary-600 dark:hover:bg-primary-500 dark:hover:text-white transition-all shadow-lg active:scale-95 group">
+                <button 
+                  onClick={() => setSelectedPatient(patient)}
+                  className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-sm font-black hover:bg-primary-600 dark:hover:bg-primary-500 dark:hover:text-white transition-all shadow-lg active:scale-95 group"
+                >
                   {t('view_medical_record')}
                   <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -125,6 +129,105 @@ const DoctorPatients = () => {
           )}
         </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {selectedPatient && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
+            <m.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2rem] shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              <div className="p-6 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800/50">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-black text-xl">
+                    {selectedPatient.user.first_name[0]}{selectedPatient.user.last_name[0]}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xl text-gray-900 dark:text-white">
+                      {selectedPatient.user.first_name} {selectedPatient.user.last_name}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">Dossier Médical</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setSelectedPatient(null)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 transition-all hover:bg-gray-50"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="p-6 overflow-y-auto space-y-6 flex-1">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-gray-100 dark:border-slate-800">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Groupe Sanguin</span>
+                    <span className="font-black text-gray-900 dark:text-white text-lg">{selectedPatient.blood_group || '-'}</span>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-gray-100 dark:border-slate-800">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Poids</span>
+                    <span className="font-black text-gray-900 dark:text-white text-lg">{selectedPatient.weight ? `${selectedPatient.weight} kg` : '-'}</span>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-gray-100 dark:border-slate-800">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Taille</span>
+                    <span className="font-black text-gray-900 dark:text-white text-lg">{selectedPatient.height ? `${selectedPatient.height} cm` : '-'}</span>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-gray-100 dark:border-slate-800">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Âge</span>
+                    <span className="font-black text-gray-900 dark:text-white text-lg">
+                      {selectedPatient.date_of_birth ? new Date().getFullYear() - new Date(selectedPatient.date_of_birth).getFullYear() + " ans" : '-'}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                    <Activity size={18} className="text-primary-600" /> Allergies & Antécédents
+                  </h4>
+                  <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 text-sm text-gray-700 dark:text-slate-300 min-h-[80px]">
+                    {selectedPatient.allergies || 'Aucune allergie ou antécédent déclaré.'}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                    <FileText size={18} className="text-primary-600" /> Documents Médicaux
+                  </h4>
+                  {(!selectedPatient.medical_documents || selectedPatient.medical_documents.length === 0) ? (
+                    <div className="bg-gray-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-gray-100 dark:border-slate-800 text-center text-sm text-gray-500 dark:text-slate-400">
+                      Aucun document médical disponible pour ce patient.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {selectedPatient.medical_documents.map(doc => (
+                        <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-800 hover:border-primary-200 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center text-primary-600 shadow-sm">
+                              <FileText size={18} />
+                            </div>
+                            <div>
+                              <p className="font-bold text-sm text-gray-900 dark:text-white truncate max-w-[200px] sm:max-w-xs">{doc.title}</p>
+                              <p className="text-xs text-gray-500 dark:text-slate-400 font-medium">{new Date(doc.uploaded_at).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          <a 
+                            href={api.defaults.baseURL.replace('/api', '') + doc.file_url} 
+                            target="_blank" rel="noreferrer"
+                            className="px-4 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 text-primary-600 dark:text-primary-400 rounded-xl text-xs font-bold shadow-sm hover:bg-primary-50 transition-colors"
+                          >
+                            Ouvrir
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </m.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

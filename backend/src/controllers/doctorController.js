@@ -93,10 +93,13 @@ exports.getDoctorPatients = async (req, res) => {
     const doctor = await prisma.doctor.findUnique({ where: { user_id: req.user.id } });
     
     const appointments = await prisma.appointment.findMany({
-      where: { doctor_id: doctor.id, status: 'completed' },
+      where: { doctor_id: doctor.id, status: { in: ['completed', 'confirmed'] } },
       include: {
         patient: {
-          include: { user: true }
+          include: { 
+            user: true,
+            medical_documents: true 
+          }
         }
       },
       distinct: ['patient_id']
