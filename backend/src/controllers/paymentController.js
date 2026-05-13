@@ -104,6 +104,11 @@ exports.confirmPayment = async (req, res) => {
         }
       });
 
+      // Notification temps réel pour l'admin (stats) et le docteur (agenda)
+      if (req.app.get('io')) {
+        req.app.get('io').emit('payment_confirmed', { appointmentId: appointment_id });
+      }
+
       res.json({ message: 'Paiement confirmé avec succès.' });
     } else {
       res.status(400).json({ message: 'Le paiement n\'a pas encore réussi.' });

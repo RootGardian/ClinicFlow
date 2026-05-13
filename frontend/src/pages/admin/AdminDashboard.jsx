@@ -10,6 +10,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
+
+const getSocketUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
+  return url.replace('/api', '');
+};
+const socket = io(getSocketUrl());
 
 const AdminDashboard = () => {
   const { logout } = useAuth();
@@ -31,6 +38,20 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchData();
+
+    socket.on('payment_confirmed', () => {
+      fetchData();
+      toast.success("Nouveau paiement reçu ! Statistiques mises à jour.");
+    });
+
+    socket.on('appointment_updated', () => {
+      fetchData();
+    });
+
+    return () => {
+      socket.off('payment_confirmed');
+      socket.off('appointment_updated');
+    };
   }, []);
 
   const fetchData = async () => {
