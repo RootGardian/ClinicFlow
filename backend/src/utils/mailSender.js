@@ -2,12 +2,14 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, text, html, attachments }) => {
   try {
-    const port = parseInt(process.env.MAIL_PORT) || 587;
+    // Render bloque les ports 25, 465, 587 sur son plan gratuit.
+    // On utilise le port 2525 supporté par Brevo pour contourner ce blocage.
+    const port = parseInt(process.env.MAIL_PORT) || 2525;
 
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST || 'smtp-relay.brevo.com',
       port,
-      secure: port === 465, // true pour 465, false pour 587
+      secure: port === 465, // true pour 465, false pour 587 et 2525
       auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
