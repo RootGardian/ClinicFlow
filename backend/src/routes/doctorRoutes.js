@@ -12,6 +12,7 @@ const {
   updateAppointmentStatus,
   deleteAppointment
 } = require('../controllers/doctorController');
+const { getSecureDocument } = require('../controllers/patientController');
 const { protect, authorize } = require('../middlewares/authMiddleware');
 const { doctorProfileValidationRules, validate } = require('../middlewares/validator');
 
@@ -31,5 +32,6 @@ router.post('/prescription', createPrescription);
 router.get('/appointments', getDoctorAppointments);
 router.put('/appointments/:id/status', updateAppointmentStatus);
 router.delete('/appointments/:id', deleteAppointment);
+router.get('/documents/:filename', getSecureDocument);
 
 module.exports = router;

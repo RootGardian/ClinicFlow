@@ -197,9 +197,9 @@ const getSecureDocument = async (req, res) => {
     const userId = req.user.id;
     const role = req.user.role;
 
-    // Trouver le document en base pour savoir à qui il appartient
+    // Trouver le document en base
     const document = await prisma.medicalDocument.findFirst({
-      where: { file_url: `/uploads/patient_docs/${filename}` },
+      where: { file_url: { contains: filename } },
       include: { patient: true }
     });
 
@@ -210,12 +210,10 @@ const getSecureDocument = async (req, res) => {
     let hasAccess = false;
 
     if (role === 'patient') {
-      // Le patient ne peut voir que ses propres documents
       if (document.patient.user_id === userId) {
         hasAccess = true;
       }
     } else if (role === 'doctor') {
-      // Un docteur peut voir le document seulement s'il a un RDV avec ce patient
       const doctor = await prisma.doctor.findUnique({ where: { user_id: userId } });
       const appointment = await prisma.appointment.findFirst({
         where: {
@@ -233,7 +231,8 @@ const getSecureDocument = async (req, res) => {
       return res.status(403).json({ message: 'Accès refusé. Confidentialité non respectée.' });
     }
 
-    const filePath = path.join(__dirname, '../../uploads/patient_docs', filename);
+    // Le file_url est sous la forme "/uploads/prescriptions/nom.pdf" ou "/uploads/patient_docs/nom.pdf"
+    const filePath = path.join(__dirname, '../..', document.file_url);
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath);
     } else {

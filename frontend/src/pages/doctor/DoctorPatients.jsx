@@ -211,13 +211,28 @@ const DoctorPatients = () => {
                               <p className="text-xs text-gray-500 dark:text-slate-400 font-medium">{new Date(doc.uploaded_at).toLocaleDateString()}</p>
                             </div>
                           </div>
-                          <a 
-                            href={api.defaults.baseURL.replace('/api', '') + doc.file_url} 
-                            target="_blank" rel="noreferrer"
+                          <button 
+                            onClick={async () => {
+                              try {
+                                const filename = doc.file_url.split('/').pop();
+                                const response = await api.get(`/doctor/documents/${filename}`, {
+                                  responseType: 'blob'
+                                });
+                                const url = window.URL.createObjectURL(new Blob([response.data]));
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.setAttribute('download', filename);
+                                document.body.appendChild(link);
+                                link.click();
+                                link.remove();
+                              } catch (err) {
+                                alert("Vous n'avez pas l'autorisation d'accéder à ce document ou le fichier n'existe plus.");
+                              }
+                            }}
                             className="px-4 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 text-primary-600 dark:text-primary-400 rounded-xl text-xs font-bold shadow-sm hover:bg-primary-50 transition-colors"
                           >
                             Ouvrir
-                          </a>
+                          </button>
                         </div>
                       ))}
                     </div>
