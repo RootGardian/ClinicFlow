@@ -5,6 +5,59 @@ const path = require('path');
 const fs = require('fs');
 const logger = require('../utils/logger');
 
+// Récupérer le portefeuille du docteur (Gains - Frais plateforme)
+exports.getDoctorWallet = async (req, res) => {
+  try {
+    const doctor = await prisma.doctor.findUnique({
+      where: { user_id: req.user.id }
+    });
+
+    if (!doctor) return res.status(404).json({ message: "Médecin non trouvé." });
+
+    // Frais plateforme : 20%
+    const FEE_PERCENTAGE = 0.20;
+
+    const payments = await prisma.payment.findMany({
+      where: {
+        status: 'succeeded',
+        appointment: { doctor_id: doctor.id }
+      },
+      orderBy: { created_at: 'desc' }
+    });
+
+    // Transformer les paiements en transactions nettes pour le docteur
+    const transactions = payments.map(p => ({
+      id: p.id,
+      appointment_id: p.appointment_id,
+      amount: Math.round((parseFloat(p.amount) * (1 - FEE_PERCENTAGE)) * 100) / 100,
+      currency: p.currency,
+      status: p.status,
+      created_at: p.created_at
+    }));
+
+    const totalEarnings = transactions.reduce((sum, t) => sum + t.amount, 0);
+
+    // Calculer les gains du mois en cours
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const monthlyEarnings = transactions
+      .filter(t => new Date(t.created_at) >= startOfMonth)
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    res.json({
+      totalEarnings: Math.round(totalEarnings * 100) / 100,
+      monthlyEarnings: Math.round(monthlyEarnings * 100) / 100,
+      currency: 'MAD',
+      transactions
+    });
+  } catch (error) {
+    console.error("Wallet Error:", error);
+    res.status(500).json({ message: 'Erreur lors du calcul des gains.' });
+  }
+};
+
 // Récupérer le profil du docteur connecté
 exports.getDoctorProfile = async (req, res) => {
   try {

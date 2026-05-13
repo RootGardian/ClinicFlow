@@ -116,7 +116,6 @@ app.use((err, req, res, next) => {
 });
 
 
-server.listen(PORT, async () => {
-  await autoSeedAdmin();
+server.listen(PORT, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT} 🛡️ (Sécurisé OWASP)`);
 });
