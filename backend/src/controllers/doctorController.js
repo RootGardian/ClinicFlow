@@ -321,8 +321,15 @@ exports.updateAppointmentStatus = async (req, res) => {
 exports.deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
+    const appId = parseInt(id);
+
+    // Supprimer les dépendances pour éviter l'erreur de contrainte de clé étrangère
+    await prisma.prescription.deleteMany({ where: { appointment_id: appId } });
+    await prisma.consultation.deleteMany({ where: { appointment_id: appId } });
+    await prisma.payment.deleteMany({ where: { appointment_id: appId } });
+
     await prisma.appointment.delete({
-      where: { id: parseInt(id) }
+      where: { id: appId }
     });
     logger.info({
       event: 'SENSITIVE_ACTION_DELETE_RDV',

@@ -275,10 +275,10 @@ const ConsultationRoom = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-xl rounded-[2.5rem] p-10 shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-slate-900 w-full max-w-xl rounded-[2.5rem] p-10 shadow-2xl max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                   <FileText className="text-primary-600" size={24} />
                   {t('prescription_title')}
                 </h3>
@@ -289,22 +289,22 @@ const ConsultationRoom = () => {
 
               {prescriptionSent ? (
                 <div className="py-10 text-center space-y-4">
-                  <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto">
                     <CheckCircle size={32} />
                   </div>
-                  <p className="font-bold text-green-600 text-lg">{t('prescription_success')}</p>
+                  <p className="font-bold text-green-600 dark:text-green-400 text-lg">{t('prescription_success')}</p>
                 </div>
               ) : (
                 <form onSubmit={handleSendPrescription} className="space-y-6">
                   <div className="space-y-4">
-                    <label className="block text-sm font-bold text-gray-700">{t('medications')}</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-slate-300">{t('medications')}</label>
                     {medications.map((item, index) => (
                       <div key={index} className="flex gap-3 items-start">
                         <div className="flex-1 space-y-3">
                           <input 
                             required
                             placeholder={t('med_placeholder')}
-                            className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white placeholder-gray-400"
                             value={item.med}
                             onChange={(e) => {
                               const newMeds = [...medications];
@@ -315,7 +315,7 @@ const ConsultationRoom = () => {
                           <input 
                             required
                             placeholder={t('dosage_placeholder')}
-                            className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                            className="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                             value={item.dosage}
                             onChange={(e) => {
                               const newMeds = [...medications];
@@ -341,11 +341,11 @@ const ConsultationRoom = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">{t('advice_label')}</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">{t('advice_label')}</label>
                     <textarea 
                       value={advice}
                       onChange={(e) => setAdvice(e.target.value)}
-                      className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                      className="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 resize-none text-gray-900 dark:text-white placeholder-gray-400"
                       rows={3}
                       placeholder={t('advice_placeholder')}
                     />
@@ -369,12 +369,12 @@ const ConsultationRoom = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-2xl rounded-[2.5rem] p-10 shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] p-10 shadow-2xl max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center mb-8 border-b pb-6">
+              <div className="flex justify-between items-center mb-8 border-b dark:border-slate-800 pb-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900">{t('patient_record')}</h3>
-                  <p className="text-gray-500">{t('patient_record_sub')}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('patient_record')}</h3>
+                  <p className="text-gray-500 dark:text-slate-400">{t('patient_record_sub')}</p>
                 </div>
                 <button onClick={() => setShowPatientInfo(false)} className="text-gray-400 hover:text-gray-600 bg-gray-100 p-2 rounded-xl">
                   <X size={24} />
@@ -389,34 +389,34 @@ const ConsultationRoom = () => {
               ) : patientData ? (
                 <div className="space-y-8">
                   <div className="grid grid-cols-4 gap-4">
-                    <div className="bg-primary-50 p-4 rounded-2xl text-center">
-                      <p className="text-[10px] text-primary-600 font-bold uppercase mb-1">{t('blood_group')}</p>
-                      <p className="text-lg font-bold text-primary-900">{patientData.blood_group || '--'}</p>
+                    <div className="bg-primary-50 dark:bg-primary-900/20 p-4 rounded-2xl text-center">
+                      <p className="text-[10px] text-primary-600 dark:text-primary-400 font-bold uppercase mb-1">{t('blood_group')}</p>
+                      <p className="text-lg font-bold text-primary-900 dark:text-white">{patientData.blood_group || '--'}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-2xl text-center">
-                      <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{t('weight')}</p>
-                      <p className="text-lg font-bold text-gray-900">{patientData.weight ? `${patientData.weight} kg` : '--'}</p>
+                    <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-2xl text-center">
+                      <p className="text-[10px] text-gray-500 dark:text-slate-400 font-bold uppercase mb-1">{t('weight')}</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{patientData.weight ? `${patientData.weight} kg` : '--'}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-2xl text-center">
-                      <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{t('height')}</p>
-                      <p className="text-lg font-bold text-gray-900">{patientData.height ? `${patientData.height} cm` : '--'}</p>
+                    <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-2xl text-center">
+                      <p className="text-[10px] text-gray-500 dark:text-slate-400 font-bold uppercase mb-1">{t('height')}</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{patientData.height ? `${patientData.height} cm` : '--'}</p>
                     </div>
-                    <div className="bg-red-50 p-4 rounded-2xl text-center">
-                      <p className="text-[10px] text-red-600 font-bold uppercase mb-1">{t('age')}</p>
-                      <p className="text-lg font-bold text-red-900">
+                    <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-2xl text-center">
+                      <p className="text-[10px] text-red-600 dark:text-red-400 font-bold uppercase mb-1">{t('age')}</p>
+                      <p className="text-lg font-bold text-red-900 dark:text-white">
                         {patientData.date_of_birth ? `${new Date().getFullYear() - new Date(patientData.date_of_birth).getFullYear()} ${t('years')}` : '--'}
                       </p>
                     </div>
                   </div>
-                  <div className="bg-orange-50 p-6 rounded-3xl border border-orange-100">
-                    <h4 className="font-bold text-orange-900 mb-2 flex items-center gap-2">
+                  <div className="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-3xl border border-orange-100 dark:border-orange-800">
+                    <h4 className="font-bold text-orange-900 dark:text-orange-400 mb-2 flex items-center gap-2">
                       <AlertCircle size={18} />
                       {t('allergies_title')}
                     </h4>
-                    <p className="text-orange-800 text-sm">{patientData.allergies || t('no_allergies')}</p>
+                    <p className="text-orange-800 dark:text-orange-200 text-sm">{patientData.allergies || t('no_allergies')}</p>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <h4 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                       <FileText size={20} className="text-primary-600" />
                       {t('docs_analyses')}
                     </h4>
@@ -426,14 +426,14 @@ const ConsultationRoom = () => {
                           <button 
                             key={doc.id}
                             onClick={() => downloadFile(doc.file_url, doc.title)}
-                            className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:shadow-md transition-all group"
+                            className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl hover:bg-white dark:hover:bg-slate-700 hover:shadow-md transition-all group"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 border border-gray-100">
+                              <div className="w-10 h-10 bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center text-primary-600 border border-gray-100 dark:border-slate-700">
                                 <FileText size={20} />
                               </div>
                               <div>
-                                <p className="font-bold text-gray-900 text-sm text-left">{doc.title}</p>
+                                <p className="font-bold text-gray-900 dark:text-white text-sm text-left">{doc.title}</p>
                                 <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider text-left">{doc.file_type}</p>
                               </div>
                             </div>
@@ -490,10 +490,10 @@ const ConsultationRoom = () => {
               initial={{ x: 300 }}
               animate={{ x: 0 }}
               exit={{ x: 300 }}
-              className="w-80 bg-white border-l border-gray-200 flex flex-col shadow-2xl z-30"
+              className="w-80 bg-white dark:bg-slate-900 border-l border-gray-200 dark:border-slate-800 flex flex-col shadow-2xl z-30"
             >
-              <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+              <div className="p-4 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
+                <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   <MessageSquare size={18} className="text-primary-600" />
                   {t('medical_chat')}
                 </h3>
@@ -507,7 +507,7 @@ const ConsultationRoom = () => {
                     <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
                       msg.senderId === user.id 
                       ? 'bg-primary-600 text-white rounded-tr-none' 
-                      : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                      : 'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 rounded-tl-none'
                     }`}>
                       {msg.text}
                     </div>
@@ -518,14 +518,14 @@ const ConsultationRoom = () => {
                 ))}
                 <div ref={chatEndRef} />
               </div>
-              <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-100 bg-gray-50">
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-900">
                 <div className="relative">
                   <input 
                     type="text"
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     placeholder={t('type_message')}
-                    className="w-full pl-4 pr-12 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm transition-all shadow-sm"
+                    className="w-full pl-4 pr-12 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm transition-all shadow-sm text-gray-900 dark:text-white placeholder-gray-400"
                   />
                   <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all shadow-md">
                     <Send size={16} />

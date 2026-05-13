@@ -174,8 +174,15 @@ const getPatientAppointments = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
+    const appId = parseInt(id);
+
+    // Supprimer les dépendances pour éviter l'erreur de contrainte de clé étrangère
+    await prisma.prescription.deleteMany({ where: { appointment_id: appId } });
+    await prisma.consultation.deleteMany({ where: { appointment_id: appId } });
+    await prisma.payment.deleteMany({ where: { appointment_id: appId } });
+
     await prisma.appointment.delete({
-      where: { id: parseInt(id) }
+      where: { id: appId }
     });
     res.json({ message: 'RDV supprimé avec succès.' });
   } catch (error) {
