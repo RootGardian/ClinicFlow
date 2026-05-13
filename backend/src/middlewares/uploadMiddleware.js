@@ -5,11 +5,11 @@ const fs = require('fs');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Déterminer le dossier en fonction du champ du formulaire
-    let dir = 'uploads/patient_docs';
+    let dir = path.join(__dirname, '../../uploads/patient_docs');
     if (file.fieldname === 'avatar') {
-        dir = 'uploads/avatars';
+        dir = path.join(__dirname, '../../uploads/avatars');
     } else if (file.fieldname === 'prescription') {
-        dir = 'uploads/prescriptions';
+        dir = path.join(__dirname, '../../uploads/prescriptions');
     }
 
     if (!fs.existsSync(dir)){

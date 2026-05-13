@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
+const multer = require('multer');
 require('dotenv').config();
 
 const helmet = require('helmet');
@@ -103,6 +104,15 @@ app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/consultation', require('./routes/consultationRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/prescription', require('./routes/prescriptionRoutes'));
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("Global Error:", err);
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ message: "Erreur de fichier: " + err.message });
+  }
+  res.status(500).json({ message: err.message || "Erreur serveur inattendue." });
+});
 
 server.listen(PORT, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT} 🛡️ (Sécurisé OWASP)`);
