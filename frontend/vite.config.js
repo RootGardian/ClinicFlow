@@ -19,9 +19,10 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['lucide-react', 'framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },
