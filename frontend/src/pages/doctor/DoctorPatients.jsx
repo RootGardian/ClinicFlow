@@ -3,6 +3,7 @@ import { Search, User, Mail, Phone, Calendar, ChevronRight, Loader2, Filter, X, 
 import { motion as m, AnimatePresence } from 'framer-motion';
 import api from '../../utils/api';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 const DoctorPatients = () => {
   const { t } = useTranslation();
@@ -226,7 +227,7 @@ const DoctorPatients = () => {
                                 link.click();
                                 link.remove();
                               } catch (err) {
-                                alert("Vous n'avez pas l'autorisation d'accéder à ce document ou le fichier n'existe plus.");
+                                toast.error("Vous n'avez pas l'autorisation d'accéder à ce document ou le fichier n'existe plus.");
                               }
                             }}
                             className="px-4 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 text-primary-600 dark:text-primary-400 rounded-xl text-xs font-bold shadow-sm hover:bg-primary-50 transition-colors"

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Stethoscope, FileText, DollarSign, Award, 
@@ -37,7 +38,7 @@ const Onboarding = () => {
         const birthDate = new Date(data.date_of_birth);
         const today = new Date();
         if (birthDate > today) {
-          alert("La date de naissance ne peut pas être dans le futur.");
+          toast.error("La date de naissance ne peut pas être dans le futur.");
           setLoading(false);
           return;
         }
@@ -49,7 +50,7 @@ const Onboarding = () => {
     } catch (err) {
       console.error('FULL ERROR:', err);
       const msg = err.response?.data?.message || err.response?.data?.error || "Erreur inconnue";
-      alert(`Échec : ${msg}`);
+      toast.error(`Échec : ${msg}`);
     } finally {
       setLoading(false);
     }

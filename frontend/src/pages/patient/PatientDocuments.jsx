@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 import { io } from 'socket.io-client';
 
@@ -65,8 +66,9 @@ const PatientDocuments = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       fetchDocuments();
+      toast.success(t('upload_success') || 'Document importé avec succès');
     } catch (err) {
-      alert(err.response?.data?.message || t('load_error'));
+      toast.error(err.response?.data?.message || t('load_error'));
     } finally {
       setUploading(false);
     }
@@ -83,14 +85,35 @@ const PatientDocuments = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm(t('confirm_delete_doc'))) {
-      try {
-        await api.delete(`/patient/documents/${id}`);
-        fetchDocuments();
-      } catch (err) {
-        console.error("Erreur lors de la suppression:", err);
-      }
-    }
+    toast((tId) => (
+      <div className="flex flex-col gap-3">
+        <span className="font-bold text-gray-900">{t('confirm_delete_doc')}</span>
+        <div className="flex gap-2">
+          <button 
+            className="px-3 py-1 bg-red-600 text-white rounded-md text-sm"
+            onClick={async () => {
+              toast.dismiss(tId.id);
+              try {
+                await api.delete(`/patient/documents/${id}`);
+                fetchDocuments();
+                toast.success('Document supprimé');
+              } catch (err) {
+                console.error("Erreur lors de la suppression:", err);
+                toast.error('Erreur lors de la suppression');
+              }
+            }}
+          >
+            Confirmer
+          </button>
+          <button 
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md text-sm"
+            onClick={() => toast.dismiss(tId.id)}
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   const handleDrop = (e) => {
@@ -116,7 +139,7 @@ const PatientDocuments = () => {
       link.click();
       link.remove();
     } catch (err) {
-      alert(t('error_download'));
+      toast.error(t('error_download'));
     }
   };
 

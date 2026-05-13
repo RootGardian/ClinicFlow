@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../utils/api';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       timeoutId = setTimeout(() => {
         if (user) {
           logout();
-          alert("Votre session a expiré pour cause d'inactivité. Veuillez vous reconnecter.");
+          toast.error("Votre session a expiré pour cause d'inactivité. Veuillez vous reconnecter.");
         }
       }, 15 * 60 * 1000);
     };

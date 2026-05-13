@@ -13,6 +13,7 @@ import {
   User
 } from 'lucide-react';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const AppointmentBooking = () => {
   const { t } = useTranslation();
@@ -53,8 +54,7 @@ const AppointmentBooking = () => {
       });
       setStep(3);
     } catch (err) {
-      console.error("Erreur lors de la réservation:", err);
-      alert(err.response?.data?.message || t('load_error'));
+      toast.error(err.response?.data?.message || t('load_error'));
     }
   };
 

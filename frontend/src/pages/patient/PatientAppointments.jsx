@@ -4,6 +4,7 @@ import { Calendar, Clock, Video, Trash2, AlertCircle, Download, FileText, Loader
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 import { io } from 'socket.io-client';
 
@@ -43,7 +44,7 @@ const PatientAppointments = () => {
 
   const handleDownloadPrescription = async (app) => {
     if (!app.prescription) {
-       alert(t('no_prescription_yet'));
+       toast.error(t('no_prescription_yet'));
        return;
     }
     try {
@@ -58,19 +59,40 @@ const PatientAppointments = () => {
       link.click();
       link.remove();
     } catch (err) {
-      alert(t('error_download'));
+      toast.error(t('error_download'));
     }
   };
 
   const cancelAppointment = async (id) => {
-    if (window.confirm(t('confirm_cancel_appt'))) {
-      try {
-        await api.delete(`/patient/appointments/${id}`);
-        setAppointments(prev => prev.filter(a => a.id !== id));
-      } catch (err) {
-        console.error("Erreur lors de l'annulation:", err);
-      }
-    }
+    toast((tId) => (
+      <div className="flex flex-col gap-3">
+        <span className="font-bold text-gray-900">{t('confirm_cancel_appt')}</span>
+        <div className="flex gap-2">
+          <button 
+            className="px-3 py-1 bg-red-600 text-white rounded-md text-sm"
+            onClick={async () => {
+              toast.dismiss(tId.id);
+              try {
+                await api.delete(`/patient/appointments/${id}`);
+                setAppointments(prev => prev.filter(a => a.id !== id));
+                toast.success('Rendez-vous annulé');
+              } catch (err) {
+                console.error("Erreur lors de l'annulation:", err);
+                toast.error("Erreur lors de l'annulation");
+              }
+            }}
+          >
+            Confirmer
+          </button>
+          <button 
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md text-sm"
+            onClick={() => toast.dismiss(tId.id)}
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   if (loading) return (

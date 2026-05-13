@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const { logout } = useAuth();
@@ -57,18 +58,41 @@ const AdminDashboard = () => {
       await api.patch(`/admin/doctors/${doctorId}/verify`, { status: !currentStatus });
       fetchData();
     } catch (err) {
-      alert("Erreur lors de la mise à jour du statut.");
+      toast.error("Erreur lors de la mise à jour du statut.");
     }
   };
 
   const handleToggleUserStatus = async (userId, currentStatus) => {
-    if (!window.confirm(`Voulez-vous vraiment ${currentStatus ? 'bloquer' : 'débloquer'} cet utilisateur ?`)) return;
-    try {
-      await api.patch(`/admin/users/${userId}/status`, { is_active: !currentStatus });
-      fetchData();
-    } catch (err) {
-      alert("Erreur lors de la modification du statut.");
-    }
+    toast((tId) => (
+      <div className="flex flex-col gap-3">
+        <span className="font-bold text-gray-900">
+          Voulez-vous vraiment {currentStatus ? 'bloquer' : 'débloquer'} cet utilisateur ?
+        </span>
+        <div className="flex gap-2">
+          <button 
+            className="px-3 py-1 bg-red-600 text-white rounded-md text-sm"
+            onClick={async () => {
+              toast.dismiss(tId.id);
+              try {
+                await api.patch(`/admin/users/${userId}/status`, { is_active: !currentStatus });
+                fetchData();
+                toast.success('Statut modifié avec succès');
+              } catch (err) {
+                toast.error("Erreur lors de la modification du statut.");
+              }
+            }}
+          >
+            Confirmer
+          </button>
+          <button 
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md text-sm"
+            onClick={() => toast.dismiss(tId.id)}
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   if (loading) return (

@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../utils/api';
+import toast from 'react-hot-toast';
 
 const getSocketUrl = () => {
   const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
@@ -59,7 +60,7 @@ const ConsultationRoom = () => {
       link.click();
       link.remove();
     } catch (err) {
-      alert(t('error_file_access'));
+      toast.error(t('error_file_access'));
     }
   };
 
@@ -216,7 +217,7 @@ const ConsultationRoom = () => {
         }
       }, 3000);
     } catch (err) {
-      alert(t('error_sending_prescription'));
+      toast.error(t('error_sending_prescription'));
     }
   };
 
@@ -234,7 +235,7 @@ const ConsultationRoom = () => {
       link.click();
       link.remove();
     } catch (err) {
-      alert(t('error_download'));
+      toast.error(t('error_download'));
     }
   };
 

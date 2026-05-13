@@ -3,6 +3,7 @@ import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Plus, Trash2, Calendar, Save, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 const DoctorAgenda = () => {
   const { t } = useTranslation();
@@ -46,10 +47,10 @@ const DoctorAgenda = () => {
     setSaving(true);
     try {
       await api.post('/doctor/availabilities', { availabilities });
-      alert(t('save_success_alert') || 'Agenda mis à jour avec succès !');
+      toast.success(t('save_success_alert') || 'Agenda mis à jour avec succès !');
     } catch (err) {
       console.error(err);
-      alert(t('save_error_alert') || 'Erreur lors de la sauvegarde.');
+      toast.error(t('save_error_alert') || 'Erreur lors de la sauvegarde.');
     } finally {
       setSaving(false);
     }

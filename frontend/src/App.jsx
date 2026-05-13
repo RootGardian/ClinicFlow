@@ -56,9 +56,21 @@ const PageLoader = () => (
 );
 
 
+import { Toaster } from 'react-hot-toast';
+
 const App = () => {
   return (
     <AuthProvider>
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          style: {
+            borderRadius: '16px',
+            background: '#333',
+            color: '#fff',
+          },
+        }}
+      />
       <Router>
         <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
