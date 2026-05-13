@@ -104,7 +104,10 @@ const PublicLayout = ({ children }) => {
         </div>
         
         <div className="max-w-7xl mx-auto pt-10 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold text-slate-500">
-          <p>© 2026 ClinicFlow Maroc. {t('footer_rights')}</p>
+          <div>
+            <p>© 2026 ClinicFlow Maroc. {t('footer_rights')}</p>
+            <p className="mt-1 text-slate-600">Powered by BlackCore Tech</p>
+          </div>
           <div className="flex gap-8">
              <span className="flex items-center gap-2">
                <ShieldCheck size={14} className="text-green-500" />
