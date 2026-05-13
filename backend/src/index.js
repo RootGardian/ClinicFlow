@@ -17,7 +17,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com", "https://meet.jit.si", "https://8x8.vc"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://*.stripe.com"],
-      connectSrc: ["'self'", "https://api.stripe.com", "ws://localhost:5001", "wss://localhost:5001"],
+      connectSrc: ["'self'", "https://api.stripe.com", "wss://*.onrender.com", "ws://*.onrender.com"],
       frameSrc: ["'self'", "https://js.stripe.com", "https://meet.jit.si", "https://8x8.vc"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       upgradeInsecureRequests: [],

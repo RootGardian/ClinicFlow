@@ -11,7 +11,11 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../utils/api';
 
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5001');
+const getSocketUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+  return url.replace('/api', '');
+};
+const socket = io(getSocketUrl());
 
 const ConsultationRoom = () => {
   const { appointmentId } = useParams();
