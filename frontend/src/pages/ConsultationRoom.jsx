@@ -96,7 +96,7 @@ const ConsultationRoom = () => {
         initJitsi();
       } else {
         const script = document.createElement('script');
-        script.src = 'https://meet.jit.si/external_api.js';
+        script.src = 'https://meet.ffmuc.net/external_api.js';
         script.async = true;
         script.onload = () => initJitsi();
         script.onerror = () => setJitsiError(t('error_video_service'));
@@ -142,7 +142,7 @@ const ConsultationRoom = () => {
       const container = document.getElementById('jitsi-container');
       if (!container) return;
       container.innerHTML = '';
-      const domain = 'meet.jit.si';
+      const domain = 'meet.ffmuc.net';
       const options = {
         roomName: `Meeting-Room-Secured-${appointmentId}-442211`,
         width: '100%',
