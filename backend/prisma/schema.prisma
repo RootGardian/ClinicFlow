@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int      @id @default(autoincrement())
+  first_name           String
+  last_name            String
+  email                String   @unique
+  password             String
+  gender               String?  // M, F, Autre
+  role                 String?  // admin, doctor, patient
+  avatar_url           String?
+  is_profile_completed Boolean  @default(false)
+  is_active            Boolean  @default(true)
+  reset_otp            String?
+  reset_otp_expires    DateTime?
+  created_at           DateTime @default(now())
+
+  doctor       Doctor?
+  patient      Patient?
+  notifications Notification[]
+  auditLogs     AuditLog[]
+}
+
+model Doctor {
+  id                     Int      @id @default(autoincrement())
+  user_id                Int      @unique
+  user                   User     @relation(fields: [user_id], references: [id])
+  specialty              String?
+  license_number         String?  @unique
+  bio                    String?
+  experience_years       Int?
+  price_per_consultation Decimal?
+  identity_verified      Boolean  @default(false)
+  availability_json      Json?
+  availabilities         Availability[]
+
+  appointments Appointment[]
+  reviews      Review[]
+}
+
+model Availability {
+  id         Int      @id @default(autoincrement())
+  doctor_id  Int
+  doctor     Doctor   @relation(fields: [doctor_id], references: [id])
+  day_of_week Int     // 0 (Dimanche) à 6 (Samedi)
+  start_time String   // Format "HH:mm"
+  end_time   String   // Format "HH:mm"
+}
+
+model Patient {
+  id            Int      @id @default(autoincrement())
+  user_id       Int      @unique
+  user          User     @relation(fields: [user_id], references: [id])
+  phone         String?
+  date_of_birth DateTime?
+  blood_group   String?
+  allergies     String?
+  weight        Float?
+  height        Float?
+  address       String?
+
+  medical_documents MedicalDocument[]
+  appointments     Appointment[]
+  reviews          Review[]
+}
+
+model MedicalDocument {
+  id          Int      @id @default(autoincrement())
+  patient_id  Int
+  patient     Patient  @relation(fields: [patient_id], references: [id])
+  title       String?
+  file_url    String?
+  file_type   String?  // pdf, jpg, png
+  uploaded_at DateTime @default(now())
+}
+
+model Appointment {
+  id               Int      @id @default(autoincrement())
+  patient_id       Int
+  patient          Patient  @relation(fields: [patient_id], references: [id])
+  doctor_id        Int
+  doctor           Doctor   @relation(fields: [doctor_id], references: [id])
+  appointment_date DateTime
+  status           String?  // pending, confirmed, completed, cancelled
+  type             String?  // video, audio, message
+  is_paid          Boolean  @default(false)
+  created_at       DateTime @default(now())
+
+  consultation Consultation?
+  payment      Payment?
+  prescription Prescription?
+}
+
+model Consultation {
+  id                  Int      @id @default(autoincrement())
+  appointment_id      Int      @unique
+  appointment         Appointment @relation(fields: [appointment_id], references: [id])
+  doctor_notes        String?
+  video_call_duration Int?
+  video_record_url    String?
+  created_at          DateTime @default(now())
+}
+
+model Payment {
+  id                      Int      @id @default(autoincrement())
+  appointment_id          Int      @unique
+  appointment             Appointment @relation(fields: [appointment_id], references: [id])
+  amount                  Decimal
+  currency                String   @default("MAD")
+  status                  String?  // pending, succeeded, failed, refunded
+  payment_method          String?  // stripe, wave, orange_money
+  stripe_payment_intent_id String?  @unique
+  receipt_url             String?
+  created_at              DateTime @default(now())
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  doctor_id  Int
+  doctor     Doctor   @relation(fields: [doctor_id], references: [id])
+  patient_id Int
+  patient    Patient  @relation(fields: [patient_id], references: [id])
+  rating     Int
+  comment    String?
+  created_at DateTime @default(now())
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  title      String?
+  message    String?
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+}
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  action     String   // e.g., 'READ_PATIENT_RECORD', 'UPDATE_PRESCRIPTION'
+  method     String
+  path       String
+  ip         String?
+  status     Int
+  details    String?  @db.Text
+  created_at DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id])
+}
+
+model Prescription {
+  id              Int      @id @default(autoincrement())
+  appointment_id  Int      @unique
+  appointment     Appointment @relation(fields: [appointment_id], references: [id])
+  content         Json     // Liste des médicaments et dosages
+  advice          String?  @db.Text
+  reference_num   String   @unique
+  created_at      DateTime @default(now())
+}

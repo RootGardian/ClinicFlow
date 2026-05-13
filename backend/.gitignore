@@ -1,0 +1,8 @@
+node_modules/
+.env
+*.key
+secrets.json
+uploads/patient_docs/*
+uploads/prescriptions/*
+!uploads/patient_docs/.gitkeep
+!uploads/prescriptions/.gitkeep

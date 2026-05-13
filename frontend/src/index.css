@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Light Theme Variables - Pure White Look */
+  --bg-main: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #f1f5f9;
+  --primary: #0d9488;
+  --primary-light: #f0fdfa;
+  --card-shadow: 0 4px 20px -2px rgb(0 0 0 / 0.05);
+}
+
+.dark {
+  /* Dark Theme Variables - Ultra Dark Blue/Black */
+  --bg-main: #020617;
+  --bg-surface: #0f172a;
+  --bg-surface-hover: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #1e293b;
+  --primary: #0d9488;
+  --primary-light: rgba(13, 148, 136, 0.1);
+  --card-shadow: 0 10px 30px -5px rgb(0 0 0 / 0.5);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Glassmorphism Classes */
+.glass {
+  background: var(--bg-surface);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color);
+}
+
+/* Global utility overrides for Dark Mode to force the theme */
+.dark .bg-white {
+  background-color: var(--bg-surface) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #020617 !important;
+}
+
+.dark .text-gray-900 {
+  color: var(--text-main) !important;
+}
+
+.dark .text-gray-800 {
+  color: var(--text-main) !important;
+}
+
+.dark .text-gray-700 {
+  color: #cbd5e1 !important; /* Slate 300 */
+}
+
+.dark .text-gray-600 {
+  color: #94a3b8 !important; /* Slate 400 */
+}
+
+.dark .text-gray-500 {
+  color: #64748b !important; /* Slate 500 */
+}
+
+.dark .border-gray-100, 
+.dark .border-gray-200 {
+  border-color: var(--border-color) !important;
+}
+
+.dark .shadow-sm {
+  box-shadow: var(--card-shadow) !important;
+}
+
+/* Animations */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
