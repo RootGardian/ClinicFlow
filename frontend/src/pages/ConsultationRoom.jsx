@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../utils/api';
 
 const getSocketUrl = () => {
-  const url = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+  const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
   return url.replace('/api', '');
 };
 const socket = io(getSocketUrl());

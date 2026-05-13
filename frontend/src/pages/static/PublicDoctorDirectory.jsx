@@ -71,7 +71,7 @@ const PublicDoctorDirectory = () => {
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center text-primary-600 overflow-hidden border border-primary-50">
                         {doc.user.avatar_url ? (
-                          <img src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'}${doc.user.avatar_url}`} alt="Avatar" className="w-full h-full object-cover" />
+                          <img src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://clinicflow-backend-wi33.onrender.com'}${doc.user.avatar_url}`} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
                           <Stethoscope size={28} />
                         )}
