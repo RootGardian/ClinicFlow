@@ -38,13 +38,13 @@ const DoctorSearch = () => {
       <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-sm transition-colors">
         <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
+            <Search className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
             <input 
               type="text"
               placeholder={t('specialty_placeholder')}
               value={specialty}
               onChange={(e) => setSpecialty(e.target.value)}
-              className="w-full pl-14 pr-6 py-4.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all text-gray-900 dark:text-white"
+              className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all text-gray-900 dark:text-white"
             />
           </div>
           <button 
@@ -109,7 +109,7 @@ const DoctorSearch = () => {
                 className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-primary-200 dark:hover:border-primary-800 transition-all group relative overflow-hidden"
               >
                 {/* Availability Badge */}
-                <div className="absolute top-4 right-4 px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-800">
+                <div className="absolute top-4 end-4 px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-800">
                   {t('available') || 'Disponible'}
                 </div>
 

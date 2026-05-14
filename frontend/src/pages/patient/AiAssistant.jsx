@@ -130,7 +130,7 @@ const AiAssistant = () => {
               <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-700 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-primary-600/30">
                 <Sparkles size={40} className="text-white" />
               </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="absolute -top-2 -end-2 w-8 h-8 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Activity size={16} className="text-white" />
               </div>
               {/* Pulse rings */}
@@ -156,7 +156,7 @@ const AiAssistant = () => {
                     whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => handleQuickSymptom(s.label)}
-                    className="flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl hover:border-primary-200 dark:hover:border-primary-800 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 hover:shadow-lg hover:shadow-primary-600/5 transition-all text-left group"
+                    className="flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl hover:border-primary-200 dark:hover:border-primary-800 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 hover:shadow-lg hover:shadow-primary-600/5 transition-all text-start group"
                   >
                     <span className="text-xl">{s.icon}</span>
                     <span className="text-sm font-medium text-gray-700 dark:text-slate-300 group-hover:text-primary-700 dark:group-hover:text-primary-400">{s.label}</span>
@@ -197,7 +197,7 @@ const AiAssistant = () => {
             </AnimatePresence>
 
             {/* Chat Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-5 pb-6 pr-2 custom-scrollbar">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-5 pb-6 pe-2 custom-scrollbar">
               <AnimatePresence>
                 {messages.map((msg) => (
                   <motion.div
@@ -325,7 +325,7 @@ const AiAssistant = () => {
         <div className={`p-3 bg-white dark:bg-slate-900 border rounded-2xl shadow-xl flex items-center gap-3 transition-all ${cooldown > 0 ? 'border-amber-200 dark:border-amber-800 opacity-50' : hasStarted ? 'border-gray-200 dark:border-slate-800' : 'border-primary-200 dark:border-primary-800 shadow-primary-600/10'
           }`}>
           <div className="flex-1 flex items-center gap-2">
-            {!hasStarted && <Sparkles size={18} className="text-primary-400 shrink-0 ml-2" />}
+            {!hasStarted && <Sparkles size={18} className="text-primary-400 shrink-0 ms-2" />}
             <input
               ref={inputRef}
               type="text"

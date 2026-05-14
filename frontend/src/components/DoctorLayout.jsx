@@ -43,7 +43,8 @@ const DoctorLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-slate-900 border-r border-gray-100 dark:border-slate-800 flex flex-col fixed h-full z-20 transition-all duration-300">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white dark:bg-slate-900 border-e border-gray-100 dark:border-slate-800 flex flex-col fixed inset-y-0 start-0 h-full z-20 transition-all duration-300">
         <div className="p-6">
           <Link to="/" className="flex items-center gap-2 mb-10">
             <div className="bg-primary-600 p-1.5 rounded-lg">
@@ -85,7 +86,7 @@ const DoctorLayout = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-8 transition-all duration-300 min-h-screen">
+      <main className="flex-1 ms-64 p-8 transition-all duration-300 min-h-screen">
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white leading-tight">
@@ -112,11 +113,11 @@ const DoctorLayout = ({ children }) => {
                 className="p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 relative transition-all shadow-sm"
               >
                 <Bell size={20} />
-                <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+                <span className="absolute top-3 end-3 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute end-0 mt-3 w-80 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden">
                   <div className="p-4 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
                     <span className="font-bold text-gray-900 dark:text-white">{t('notifications')}</span>
                     <button className="text-xs text-primary-600 font-bold">{t('mark_all_read')}</button>
@@ -142,7 +143,7 @@ const DoctorLayout = ({ children }) => {
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute end-0 mt-3 w-56 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden">
                   <div className="p-4 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
                     <p className="text-sm font-bold text-gray-900 dark:text-white">{user?.first_name} {user?.last_name}</p>
                     <p className="text-xs text-gray-500 dark:text-slate-400">{user?.email}</p>
