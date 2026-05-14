@@ -412,5 +412,10 @@
   "discover_features": "اكتشف جميع ميزاتنا",
   "ready_to_care_title": "هل أنت مستعد للعناية بصحتك؟",
   "register_free": "سجل مجاناً",
-  "contact_support": "اتصل بالدعم"
+  "contact_support": "اتصل بالدعم",
+  "sort_by": "ترتيب حسب",
+  "sort_rating": "الأعلى تقييماً",
+  "sort_price_asc": "الأقل سعراً",
+  "sort_price_desc": "الأعلى سعراً",
+  "sort_experience": "الأكثر خبرة"
 }

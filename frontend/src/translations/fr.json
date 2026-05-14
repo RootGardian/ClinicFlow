@@ -413,5 +413,10 @@
   "discover_features": "Découvrir toutes nos fonctionnalités",
   "ready_to_care_title": "Prêt à prendre soin de votre santé ?",
   "register_free": "S'inscrire gratuitement",
-  "contact_support": "Contacter le support"
+  "contact_support": "Contacter le support",
+  "sort_by": "Trier par",
+  "sort_rating": "Mieux notés",
+  "sort_price_asc": "Prix croissant",
+  "sort_price_desc": "Prix décroissant",
+  "sort_experience": "Expérience"
 }

@@ -11,6 +11,8 @@ const DoctorSearch = () => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [specialty, setSpecialty] = useState(location.state?.specialty || '');
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('rating'); // 'price_asc', 'price_desc', 'experience'
 
   useEffect(() => {
     fetchDoctors(specialty);
@@ -31,6 +33,13 @@ const DoctorSearch = () => {
     e.preventDefault();
     fetchDoctors(specialty);
   };
+
+  const filteredDoctors = [...doctors].sort((a, b) => {
+    if (sortBy === 'price_asc') return (a.price_per_consultation || 0) - (b.price_per_consultation || 0);
+    if (sortBy === 'price_desc') return (b.price_per_consultation || 0) - (a.price_per_consultation || 0);
+    if (sortBy === 'experience') return (b.experience_years || 0) - (a.experience_years || 0);
+    return 0; // Default: initial order (might be rating from backend)
+  });
 
   return (
     <div className="space-y-8 pb-10">
@@ -59,12 +68,51 @@ const DoctorSearch = () => {
       {/* Results Header */}
       <div className="flex items-center justify-between px-2">
         <h3 className="font-black text-gray-900 dark:text-white text-xl">
-          {loading ? t('searching') : `${doctors.length} ${t('doctors_found') || 'Docteurs trouvés'}`}
+          {loading ? t('searching') : `${filteredDoctors.length} ${t('doctors_found')}`}
         </h3>
-        <button className="flex items-center gap-2 text-sm font-bold text-gray-500 dark:text-slate-400 hover:text-primary-600 transition-colors">
-          <Filter size={18} />
-          {t('filters') || 'Filtres'}
-        </button>
+        <div className="relative">
+          <button 
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-2 text-sm font-bold transition-all px-4 py-2 rounded-xl border ${
+              showFilters 
+                ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800 text-primary-600' 
+                : 'text-gray-500 dark:text-slate-400 border-gray-100 dark:border-slate-800 hover:text-primary-600'
+            }`}
+          >
+            <Filter size={18} />
+            {t('sort_by') || 'Trier par'}
+          </button>
+
+          {showFilters && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="absolute end-0 mt-3 w-56 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden"
+            >
+              <div className="p-2">
+                {[
+                  { id: 'rating', label: t('sort_rating') || 'Mieux notés' },
+                  { id: 'price_asc', label: t('sort_price_asc') || 'Prix croissant' },
+                  { id: 'price_desc', label: t('sort_price_desc') || 'Prix décroissant' },
+                  { id: 'experience', label: t('sort_experience') || 'Expérience' },
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => { setSortBy(option.id); setShowFilters(false); }}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                      sortBy === option.id 
+                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600' 
+                        : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {option.label}
+                    {sortBy === option.id && <div className="w-1.5 h-1.5 bg-primary-600 rounded-full"></div>}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </div>
       </div>
 
       {/* Results Grid */}
@@ -86,7 +134,7 @@ const DoctorSearch = () => {
                 </div>
               </div>
             ))
-          ) : doctors.length === 0 ? (
+          ) : filteredDoctors.length === 0 ? (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="col-span-full py-20 text-center bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-gray-200 dark:border-slate-800"
@@ -96,11 +144,11 @@ const DoctorSearch = () => {
               </div>
               <p className="text-gray-500 dark:text-slate-400 text-lg font-bold">{t('no_doctors_found')}</p>
               <button onClick={() => setSpecialty('') || fetchDoctors()} className="mt-4 text-primary-600 font-bold hover:underline">
-                {t('clear_search') || 'Réinitialiser la recherche'}
+                {t('clear_search')}
               </button>
             </motion.div>
           ) : (
-            doctors.map((doctor, i) => (
+            filteredDoctors.map((doctor, i) => (
               <motion.div 
                 key={doctor.id}
                 initial={{ opacity: 0, scale: 0.95 }}

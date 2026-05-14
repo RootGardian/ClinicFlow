@@ -412,5 +412,10 @@
   "discover_features": "Discover all our features",
   "ready_to_care_title": "Ready to take care of your health?",
   "register_free": "Register for free",
-  "contact_support": "Contact support"
+  "contact_support": "Contact support",
+  "sort_by": "Sort by",
+  "sort_rating": "Top Rated",
+  "sort_price_asc": "Lowest Price",
+  "sort_price_desc": "Highest Price",
+  "sort_experience": "Most Experienced"
 }
