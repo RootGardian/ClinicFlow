@@ -17,6 +17,7 @@ router.post('/reset-password', authLimiter, resetPassword);
 const mfaController = require('../controllers/mfaController');
 
 router.post('/mfa/setup', protect, mfaController.setupMFA);
+router.post('/mfa/init-mandatory', authLimiter, mfaController.initMandatoryMFA);
 router.post('/mfa/verify', protect, mfaController.verifyMFA);
 router.post('/mfa/disable', protect, mfaController.disableMFA);
 router.post('/mfa/verify-login', authLimiter, mfaController.verifyLoginMFA);

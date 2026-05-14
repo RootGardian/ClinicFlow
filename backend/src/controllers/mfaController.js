@@ -93,7 +93,30 @@ exports.disableMFA = async (req, res) => {
   }
 };
 
-// Verify Login Token
+// Initialiser MFA obligatoire (sans authentification préalable, utilisé lors du login)
+exports.initMandatoryMFA = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: parseInt(userId) } });
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    // Use existing secret if any, otherwise generate new
+    const secret = user.mfa_secret || authenticator.generateSecret();
+    const otpauth = authenticator.keyuri(user.email, 'ClinicFlow', secret);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { mfa_secret: secret }
+    });
+
+    res.json({ secret, otpauth });
+  } catch (error) {
+    console.error("Mandatory MFA Setup Error:", error);
+    res.status(500).json({ message: "Erreur lors de l'initialisation du MFA" });
+  }
+};
+
+// Verify Login Token (supports both normal login and first-time setup)
 exports.verifyLoginMFA = async (req, res) => {
   const { token, userId } = req.body;
   const jwt = require('jsonwebtoken');
@@ -103,7 +126,7 @@ exports.verifyLoginMFA = async (req, res) => {
       where: { id: parseInt(userId) }
     });
 
-    if (!user || !user.mfa_secret || !user.mfa_enabled) {
+    if (!user || !user.mfa_secret) {
       return res.status(400).json({ message: "MFA non configuré pour cet utilisateur" });
     }
 
@@ -131,7 +154,8 @@ exports.verifyLoginMFA = async (req, res) => {
         last_name: user.last_name,
         email: user.email,
         role: user.role,
-        avatar_url: user.avatar_url
+        avatar_url: user.avatar_url,
+        is_profile_completed: user.is_profile_completed
       }
     });
   } catch (error) {

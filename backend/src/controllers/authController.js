@@ -100,6 +100,15 @@ exports.login = async (req, res) => {
 
     // MFA Check
     if (user.mfa_enabled) {
+      // If MFA is enabled but no secret exists, they must set it up
+      if (!user.mfa_secret) {
+        return res.json({
+          mfa_setup_required: true,
+          userId: user.id,
+          message: 'MFA setup requis'
+        });
+      }
+
       return res.json({
         mfa_required: true,
         userId: user.id,

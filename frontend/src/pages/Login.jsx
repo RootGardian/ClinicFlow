@@ -11,12 +11,15 @@ import { useTranslation } from 'react-i18next';
 const Login = () => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const login = useNavigate();
+  const [error, setError] = useState('');
   const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaSetupRequired, setMfaSetupRequired] = useState(false);
+  const [mfaSetupData, setMfaSetupData] = useState(null);
   const [mfaUserId, setMfaUserId] = useState(null);
   const [mfaToken, setMfaToken] = useState('');
   const { login, verifyMfa } = useAuth();
   const navigate = useNavigate();
+  const { QRCodeSVG } = require('qrcode.react');
 
   const loginSchema = z.object({
     email: z.string().email(t('email_error') || 'Email invalide'),
@@ -32,6 +35,15 @@ const Login = () => {
     try {
       const response = await login(data.email, data.password);
       
+      if (response.mfa_setup_required) {
+        setMfaSetupRequired(true);
+        setMfaUserId(response.userId);
+        // Fetch setup data (QR Code)
+        const setupRes = await api.post('/auth/mfa/init-mandatory', { userId: response.userId });
+        setMfaSetupData(setupRes.data);
+        return;
+      }
+
       if (response.mfa_required) {
         setMfaRequired(true);
         setMfaUserId(response.userId);
@@ -172,7 +184,7 @@ const Login = () => {
               )}
             </button>
           </form>
-        ) : (
+        ) : mfaRequired ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -205,6 +217,47 @@ const Login = () => {
                 className="w-full text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
               >
                 Retour
+              </button>
+            </form>
+          </motion.div>
+        ) : (
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <ShieldCheck size={32} />
+              </div>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white">Sécurité Obligatoire</h3>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-2 font-medium">Le MFA est maintenant requis pour tous les comptes. Veuillez scanner ce code.</p>
+            </div>
+
+            {mfaSetupData && (
+              <div className="flex flex-col items-center gap-4 bg-gray-50 dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700">
+                <div className="bg-white p-3 rounded-xl shadow-lg">
+                  <QRCodeSVG value={mfaSetupData.otpauth} size={150} />
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-1">Code de secours</p>
+                  <p className="text-sm font-mono text-primary-600 dark:text-primary-400 font-bold">{mfaSetupData.secret}</p>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={onMfaSubmit} className="space-y-6">
+              <input
+                type="text"
+                maxLength="6"
+                autoFocus
+                value={mfaToken}
+                onChange={(e) => setMfaToken(e.target.value.replace(/\D/g, ''))}
+                placeholder="Entrez le code généré"
+                className="w-full px-6 py-5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-black text-center tracking-[0.2em] text-xl"
+              />
+              <button
+                type="submit"
+                disabled={mfaToken.length !== 6 || isSubmitting}
+                className="w-full bg-primary-600 text-white py-5 rounded-2xl font-black hover:bg-primary-700 shadow-xl shadow-primary-600/20 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              >
+                Activer et continuer
               </button>
             </form>
           </motion.div>

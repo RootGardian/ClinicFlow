@@ -20,7 +20,7 @@ model User {
   is_active            Boolean  @default(true)
   reset_otp            String?
   reset_otp_expires    DateTime?
-  mfa_enabled          Boolean  @default(false)
+  mfa_enabled          Boolean  @default(true)
   mfa_secret           String?
   created_at           DateTime @default(now())
 
