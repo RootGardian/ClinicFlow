@@ -1,7 +1,6 @@
 const { authenticator } = require('otplib');
 const qrcode = require('qrcode');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../config/db');
 
 // Setup MFA: Generate secret and return QR code
 exports.setupMFA = async (req, res) => {
