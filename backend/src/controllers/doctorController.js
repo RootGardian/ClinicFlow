@@ -17,16 +17,18 @@ exports.getDoctorWallet = async (req, res) => {
     // Frais plateforme : 20%
     const FEE_PERCENTAGE = 0.20;
 
-    const payments = await prisma.payment.findMany({
+    const allPayments = await prisma.payment.findMany({
       where: {
-        status: 'succeeded',
         appointment: { doctor_id: doctor.id }
       },
       orderBy: { created_at: 'desc' }
     });
 
+    const succeededPayments = allPayments.filter(p => p.status === 'succeeded');
+    const pendingPayments = allPayments.filter(p => p.status === 'pending');
+
     // Transformer les paiements en transactions nettes pour le docteur
-    const transactions = payments.map(p => ({
+    const transactions = allPayments.map(p => ({
       id: p.id,
       appointment_id: p.appointment_id,
       amount: Math.round((parseFloat(p.amount) * (1 - FEE_PERCENTAGE)) * 100) / 100,
@@ -35,26 +37,28 @@ exports.getDoctorWallet = async (req, res) => {
       created_at: p.created_at
     }));
 
-    const totalEarningsRaw = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalEarnedNet = succeededPayments.reduce((sum, p) => sum + (parseFloat(p.amount) * (1 - FEE_PERCENTAGE)), 0);
+    const pendingEarnedNet = pendingPayments.reduce((sum, p) => sum + (parseFloat(p.amount) * (1 - FEE_PERCENTAGE)), 0);
 
     // Soustraire les retraits déjà effectués ou en cours
     const withdrawals = await prisma.withdrawal.findMany({
       where: { doctor_id: doctor.id, status: { in: ['pending', 'completed'] } }
     });
     const totalWithdrawn = withdrawals.reduce((sum, w) => sum + parseFloat(w.amount), 0);
-    const availableBalance = Math.max(0, totalEarningsRaw - totalWithdrawn);
+    const availableBalance = Math.max(0, totalEarnedNet - totalWithdrawn);
 
-    // Calculer les gains du mois en cours
+    // Calculer les gains du mois en cours (Succeeded uniquement)
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const monthlyEarnings = transactions
-      .filter(t => new Date(t.created_at) >= startOfMonth)
-      .reduce((sum, t) => sum + t.amount, 0);
+    const monthlyEarnings = succeededPayments
+      .filter(p => new Date(p.created_at) >= startOfMonth)
+      .reduce((sum, p) => sum + (parseFloat(p.amount) * (1 - FEE_PERCENTAGE)), 0);
 
     res.json({
       totalEarnings: Math.round(availableBalance * 100) / 100,
+      pendingEarnings: Math.round(pendingEarnedNet * 100) / 100,
       monthlyEarnings: Math.round(monthlyEarnings * 100) / 100,
       currency: 'MAD',
       transactions

@@ -17,13 +17,18 @@ const socket = io(getSocketUrl());
 const DoctorDashboard = () => {
   const { t } = useTranslation();
   const [appointments, setAppointments] = useState([]);
+  const [wallet, setWallet] = useState({ totalEarnings: 0, currency: 'MAD' });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchDashboardData = async () => {
     try {
-      const res = await api.get('/doctor/appointments');
-      setAppointments(res.data);
+      const [appRes, walletRes] = await Promise.all([
+        api.get('/doctor/appointments'),
+        api.get('/doctor/wallet')
+      ]);
+      setAppointments(appRes.data);
+      setWallet(walletRes.data);
     } catch (err) {
       console.error("Erreur lors de la récupération du dashboard:", err);
     }
@@ -62,18 +67,18 @@ const DoctorDashboard = () => {
       bg: 'bg-primary-50 dark:bg-primary-900/20' 
     },
     { 
-      label: t('pending'), 
-      value: pendingApps.length.toString(), 
-      icon: Clock, 
-      color: 'text-purple-600 dark:text-purple-400', 
-      bg: 'bg-purple-50 dark:bg-purple-900/20' 
-    },
-    { 
-      label: t('estimated_earnings'), 
-      value: `${((confirmedApps.length + completedApps.length) * 300).toLocaleString()} MAD`, 
+      label: t('available_balance') || 'Solde Disponible', 
+      value: `${wallet.totalEarnings.toLocaleString()} ${wallet.currency || 'MAD'}`, 
       icon: Wallet, 
       color: 'text-green-600 dark:text-green-400', 
       bg: 'bg-green-50 dark:bg-green-900/20' 
+    },
+    { 
+      label: t('pending_earnings') || 'Gains en attente', 
+      value: `${(wallet.pendingEarnings || 0).toLocaleString()} ${wallet.currency || 'MAD'}`, 
+      icon: Clock, 
+      color: 'text-orange-600 dark:text-orange-400', 
+      bg: 'bg-orange-50 dark:bg-orange-900/20' 
     },
   ];
 
