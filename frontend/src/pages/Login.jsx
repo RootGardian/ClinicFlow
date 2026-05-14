@@ -7,6 +7,7 @@ import { Mail, Lock, Eye, EyeOff, Activity, ArrowRight, ArrowLeft, ShieldCheck }
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import api from '../utils/api';
 
 const Login = () => {
   const { t } = useTranslation();
