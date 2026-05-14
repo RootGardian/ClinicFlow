@@ -179,6 +179,39 @@ const AdminDashboard = () => {
           ))}
         </div>
 
+        {/* Global Actions */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <button 
+            onClick={async () => {
+              try {
+                await api.post('/admin/reset-rate-limits');
+                toast.success("Tous les blocages temporaires (IP) ont été levés.");
+              } catch (err) {
+                toast.error("Erreur lors de la réinitialisation.");
+              }
+            }}
+            className="px-6 py-3 bg-orange-100 text-orange-700 font-bold text-xs rounded-2xl border border-orange-200 hover:bg-orange-200 transition-all flex items-center gap-2"
+          >
+            <AlertCircle size={16} />
+            Réinitialiser Blocages Temporaires
+          </button>
+          <button 
+            onClick={async () => {
+              try {
+                const res = await api.post('/admin/unblock-all');
+                toast.success(res.data.message);
+                fetchData();
+              } catch (err) {
+                toast.error("Erreur lors du déblocage global.");
+              }
+            }}
+            className="px-6 py-3 bg-green-100 text-green-700 font-bold text-xs rounded-2xl border border-green-200 hover:bg-green-200 transition-all flex items-center gap-2"
+          >
+            <UserCheck size={16} />
+            Réactiver Tous les Comptes
+          </button>
+        </div>
+
         {/* Dashboard Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           

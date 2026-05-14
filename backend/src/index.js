@@ -92,6 +92,9 @@ app.use('/api/', globalLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
+// Rendre le limiter accessible pour réinitialisation administrative
+app.set('authLimiter', authLimiter);
+
 // Import des routes
 console.log(`[${new Date().toLocaleTimeString()}] Initialisation des services IA...`);
 const { protect } = require('./middlewares/authMiddleware');

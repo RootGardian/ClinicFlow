@@ -12,5 +12,7 @@ router.get('/doctors', adminController.getDoctors);
 router.get('/users', adminController.getAllUsers);
 router.patch('/doctors/:doctorId/verify', adminController.toggleVerifyDoctor);
 router.patch('/users/:userId/status', adminController.toggleUserStatus);
+router.post('/reset-rate-limits', adminController.resetAllRateLimits);
+router.post('/unblock-all', adminController.unblockAllUsers);
 
 module.exports = router;

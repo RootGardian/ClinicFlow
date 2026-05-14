@@ -119,3 +119,31 @@ exports.toggleUserStatus = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la modification du statut.' });
   }
 };
+
+// Réinitialiser tous les blocages temporaires (Rate Limiter)
+exports.resetAllRateLimits = async (req, res) => {
+  try {
+    const authLimiter = req.app.get('authLimiter');
+    if (authLimiter && authLimiter.store && typeof authLimiter.store.resetAll === 'function') {
+      await authLimiter.store.resetAll();
+      res.json({ message: 'Tous les blocages temporaires ont été levés.' });
+    } else {
+      res.status(500).json({ message: 'Le service de limitation n\'est pas accessible ou ne supporte pas la réinitialisation globale.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la réinitialisation des blocages.', error: error.message });
+  }
+};
+
+// Réactiver tous les comptes suspendus
+exports.unblockAllUsers = async (req, res) => {
+  try {
+    const result = await prisma.user.updateMany({
+      where: { is_active: false },
+      data: { is_active: true }
+    });
+    res.json({ message: `${result.count} utilisateurs ont été débloqués.` });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors du déblocage global.', error: error.message });
+  }
+};
