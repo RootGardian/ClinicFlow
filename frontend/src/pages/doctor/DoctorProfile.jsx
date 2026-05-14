@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Stethoscope, FileText, DollarSign, Award, UserCircle, Camera, CheckCircle, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import MfaSetup from '../../components/MfaSetup';
 
 const DoctorProfile = () => {
   const { t } = useTranslation();
@@ -184,6 +185,10 @@ const DoctorProfile = () => {
           </button>
         </div>
       </form>
+
+      <div className="mt-12 pt-12 border-t border-gray-50 dark:border-slate-800">
+        <MfaSetup user={user} />
+      </div>
     </motion.div>
   );
 };

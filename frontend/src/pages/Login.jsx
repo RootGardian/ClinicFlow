@@ -11,8 +11,11 @@ import { useTranslation } from 'react-i18next';
 const Login = () => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const { login } = useAuth();
+  const login = useNavigate();
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaUserId, setMfaUserId] = useState(null);
+  const [mfaToken, setMfaToken] = useState('');
+  const { login, verifyMfa } = useAuth();
   const navigate = useNavigate();
 
   const loginSchema = z.object({
@@ -28,6 +31,13 @@ const Login = () => {
     setError('');
     try {
       const response = await login(data.email, data.password);
+      
+      if (response.mfa_required) {
+        setMfaRequired(true);
+        setMfaUserId(response.userId);
+        return;
+      }
+
       const { role, is_profile_completed } = response.user;
       
       if (!is_profile_completed) {
@@ -42,6 +52,26 @@ const Login = () => {
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || t('login_error_generic') || 'Identifiants incorrects');
+    }
+  };
+
+  const onMfaSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      const response = await verifyMfa(mfaUserId, mfaToken);
+      const { role, is_profile_completed } = response.user;
+      if (!is_profile_completed) {
+        navigate('/onboarding');
+      } else if (role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (role === 'doctor') {
+        navigate('/doctor/dashboard');
+      } else {
+        navigate('/patient/search');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Code MFA invalide');
     }
   };
 
@@ -85,62 +115,100 @@ const Login = () => {
           )}
         </AnimatePresence>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          <div className="space-y-3">
-            <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('email_label')}</label>
-            <div className="relative group">
-              <Mail className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary-600 transition-colors" size={20} />
-              <input
-                {...register('email')}
-                type="email"
-                className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
-                placeholder="votre@email.com"
-              />
+        {!mfaRequired ? (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('email_label')}</label>
+              <div className="relative group">
+                <Mail className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary-600 transition-colors" size={20} />
+                <input
+                  {...register('email')}
+                  type="email"
+                  className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
+                  placeholder="votre@email.com"
+                />
+              </div>
+              {errors.email && <p className="mt-1 text-[10px] font-bold text-red-500 uppercase tracking-wide">{errors.email.message}</p>}
             </div>
-            {errors.email && <p className="mt-1 text-[10px] font-bold text-red-500 uppercase tracking-wide">{errors.email.message}</p>}
-          </div>
 
-          <div className="space-y-3">
-            <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('password_label')}</label>
-            <div className="relative group">
-              <Lock className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary-600 transition-colors" size={20} />
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('password_label')}</label>
+              <div className="relative group">
+                <Lock className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary-600 transition-colors" size={20} />
+                <input
+                  {...register('password')}
+                  type={showPassword ? 'text' : 'password'}
+                  className="w-full ps-14 pe-14 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute end-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {errors.password && <p className="mt-1 text-[10px] font-bold text-red-500 uppercase tracking-wide">{errors.password.message}</p>}
+            </div>
+
+            <div className="flex items-center justify-between px-1">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className="relative flex items-center">
+                  <input type="checkbox" className="w-5 h-5 rounded-lg border-gray-200 text-primary-600 focus:ring-primary-500 dark:bg-slate-800 dark:border-slate-700 transition-all" />
+                </div>
+                <span className="text-sm text-gray-500 dark:text-slate-400 font-bold group-hover:text-primary-600 transition-colors">{t('remember_me')}</span>
+              </label>
+              <Link to="/forgot-password" className="text-sm font-black text-primary-600 hover:text-primary-700 transition-colors underline-offset-4 hover:underline">{t('forgot_password')}</Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-slate-900 dark:bg-primary-600 text-white py-5 rounded-[1.5rem] font-black hover:bg-primary-600 dark:hover:bg-primary-700 shadow-2xl shadow-primary-600/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-70 active:scale-95"
+            >
+              {isSubmitting ? <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : (
+                <>{t('login_btn')} <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
+              )}
+            </button>
+          </form>
+        ) : (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <ShieldCheck size={32} />
+              </div>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white">Vérification MFA</h3>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-2 font-medium">Entrez le code de votre application d'authentification.</p>
+            </div>
+
+            <form onSubmit={onMfaSubmit} className="space-y-6">
               <input
-                {...register('password')}
-                type={showPassword ? 'text' : 'password'}
-                className="w-full ps-14 pe-14 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
-                placeholder="••••••••"
+                type="text"
+                maxLength="6"
+                autoFocus
+                value={mfaToken}
+                onChange={(e) => setMfaToken(e.target.value.replace(/\D/g, ''))}
+                placeholder="000000"
+                className="w-full px-6 py-5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-black text-center tracking-[0.5em] text-2xl"
               />
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute end-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors"
+                type="submit"
+                disabled={mfaToken.length !== 6 || isSubmitting}
+                className="w-full bg-primary-600 text-white py-5 rounded-2xl font-black hover:bg-primary-700 shadow-xl shadow-primary-600/20 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                Vérifier et se connecter
               </button>
-            </div>
-            {errors.password && <p className="mt-1 text-[10px] font-bold text-red-500 uppercase tracking-wide">{errors.password.message}</p>}
-          </div>
-
-          <div className="flex items-center justify-between px-1">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative flex items-center">
-                <input type="checkbox" className="w-5 h-5 rounded-lg border-gray-200 text-primary-600 focus:ring-primary-500 dark:bg-slate-800 dark:border-slate-700 transition-all" />
-              </div>
-              <span className="text-sm text-gray-500 dark:text-slate-400 font-bold group-hover:text-primary-600 transition-colors">{t('remember_me')}</span>
-            </label>
-            <Link to="/forgot-password" className="text-sm font-black text-primary-600 hover:text-primary-700 transition-colors underline-offset-4 hover:underline">{t('forgot_password')}</Link>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-slate-900 dark:bg-primary-600 text-white py-5 rounded-[1.5rem] font-black hover:bg-primary-600 dark:hover:bg-primary-700 shadow-2xl shadow-primary-600/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-70 active:scale-95"
-          >
-            {isSubmitting ? <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : (
-              <>{t('login_btn')} <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
-            )}
-          </button>
-        </form>
+              <button
+                type="button"
+                onClick={() => setMfaRequired(false)}
+                className="w-full text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Retour
+              </button>
+            </form>
+          </motion.div>
+        )}
 
         <div className="mt-12 pt-8 border-t border-gray-50 dark:border-slate-800 text-center">
            <p className="text-gray-500 dark:text-slate-400 font-medium">

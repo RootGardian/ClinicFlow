@@ -98,6 +98,15 @@ exports.login = async (req, res) => {
       userAgent
     });
 
+    // MFA Check
+    if (user.mfa_enabled) {
+      return res.json({
+        mfa_required: true,
+        userId: user.id,
+        message: 'MFA requis'
+      });
+    }
+
     // Ne pas renvoyer le mot de passe
     const { password: _, ...userData } = user;
 

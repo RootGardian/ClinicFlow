@@ -13,9 +13,12 @@ import {
   Activity
 } from 'lucide-react';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
+import MfaSetup from '../../components/MfaSetup';
 
 const PatientMedicalRecord = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const { register, handleSubmit, reset } = useForm();
@@ -170,6 +173,10 @@ const PatientMedicalRecord = () => {
           </button>
         </div>
       </form>
+
+      <div className="mt-12 pt-12 border-t border-gray-100 dark:border-slate-800">
+        <MfaSetup user={user} />
+      </div>
     </motion.div>
   );
 };
