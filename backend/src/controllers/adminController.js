@@ -123,12 +123,12 @@ exports.toggleUserStatus = async (req, res) => {
 // Réinitialiser tous les blocages temporaires (Rate Limiter)
 exports.resetAllRateLimits = async (req, res) => {
   try {
-    const authLimiter = req.app.get('authLimiter');
-    if (authLimiter && authLimiter.store && typeof authLimiter.store.resetAll === 'function') {
-      await authLimiter.store.resetAll();
+    const authStore = req.app.get('authStore');
+    if (authStore && typeof authStore.resetAll === 'function') {
+      await authStore.resetAll();
       res.json({ message: 'Tous les blocages temporaires ont été levés.' });
     } else {
-      res.status(500).json({ message: 'Le service de limitation n\'est pas accessible ou ne supporte pas la réinitialisation globale.' });
+      res.status(500).json({ message: 'Le service de limitation n\'est pas accessible.' });
     }
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la réinitialisation des blocages.', error: error.message });

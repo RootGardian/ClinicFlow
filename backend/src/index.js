@@ -82,18 +82,20 @@ const globalLimiter = rateLimit({
 });
 
 // Rate limiter strict pour l'authentification
+const authStore = new rateLimit.MemoryStore();
 const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
   max: 10, // 10 tentatives max
-  message: { message: "Trop de tentatives de connexion, compte temporairement bloqué." }
+  message: { message: "Trop de tentatives de connexion, compte temporairement bloqué." },
+  store: authStore
 });
 
 app.use('/api/', globalLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
-// Rendre le limiter accessible pour réinitialisation administrative
-app.set('authLimiter', authLimiter);
+// Rendre le store accessible pour réinitialisation administrative
+app.set('authStore', authStore);
 
 // Import des routes
 console.log(`[${new Date().toLocaleTimeString()}] Initialisation des services IA...`);
