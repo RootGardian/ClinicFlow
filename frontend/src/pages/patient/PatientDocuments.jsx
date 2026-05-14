@@ -147,10 +147,6 @@ const PatientDocuments = () => {
 
   return (
     <div className="space-y-8 pb-10">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('my_documents')}</h2>
-        <p className="text-gray-500 dark:text-slate-400 text-sm">{t('medical_info_sub') || 'Conservez vos analyses, radios et ordonnances en toute sécurité.'}</p>
-      </div>
 
       {/* Upload Zone */}
       <div 

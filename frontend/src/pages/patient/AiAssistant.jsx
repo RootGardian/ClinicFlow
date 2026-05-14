@@ -170,25 +170,6 @@ const AiAssistant = () => {
         {/* ═══ Chat Interface (after first message) ═══ */}
         {hasStarted && (
           <>
-            {/* Mini Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/20">
-                  <Sparkles size={18} className="text-white" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 dark:text-white text-lg">{t('ai_assistant_title')}</h3>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">{t('ai_online') || 'En ligne'}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full text-[10px] font-bold border border-green-100 dark:border-green-800 uppercase tracking-wider">
-                <ShieldCheck size={12} /> {t('ai_secure') || 'Chiffré'}
-              </div>
-            </div>
-
             {/* Cooldown Banner */}
             <AnimatePresence>
               {cooldown > 0 && (

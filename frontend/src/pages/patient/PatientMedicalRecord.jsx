@@ -56,15 +56,6 @@ const PatientMedicalRecord = () => {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-slate-800 p-8 md:p-10 transition-colors"
     >
-      <div className="flex items-center gap-4 mb-10 border-b border-gray-50 dark:border-slate-800 pb-6">
-        <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center text-primary-600 dark:text-primary-400">
-          <Activity size={24} />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('medical_record')}</h2>
-          <p className="text-sm text-gray-500 dark:text-slate-400">{t('medical_record_subtitle') || 'Gérez vos informations de santé pour de meilleurs soins'}</p>
-        </div>
-      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

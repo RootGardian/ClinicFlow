@@ -106,12 +106,6 @@ const PatientAppointments = () => {
 
   return (
     <div className="space-y-8 pb-10">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('my_appointments')}</h2>
-          <p className="text-gray-500 dark:text-slate-400">{t('manage_appts_sub') || 'Consultez et gérez vos rendez-vous médicaux.'}</p>
-        </div>
-      </div>
 
       <div className="space-y-4">
         <AnimatePresence mode="popLayout">
