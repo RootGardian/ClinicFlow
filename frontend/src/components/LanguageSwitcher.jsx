@@ -29,7 +29,7 @@ const LanguageSwitcher = () => {
               : 'text-gray-400 hover:text-gray-600'
           }`}
         >
-          <span className="mr-1">{lang.flag}</span>
+          <span className="me-1">{lang.flag}</span>
           {lang.label}
         </button>
       ))}

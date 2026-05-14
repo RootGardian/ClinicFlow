@@ -98,7 +98,7 @@ const Register = () => {
             >
               <UserRound size={32} className={`${selectedRole === 'patient' ? 'scale-110' : ''} transition-transform duration-500`} />
               <span className="font-black text-xs uppercase tracking-widest">{t('patient')}</span>
-              {selectedRole === 'patient' && <div className="absolute top-2 right-2 w-2 h-2 bg-primary-600 rounded-full"></div>}
+              {selectedRole === 'patient' && <div className="absolute top-2 end-2 w-2 h-2 bg-primary-600 rounded-full"></div>}
             </button>
             <button
               type="button"
@@ -111,7 +111,7 @@ const Register = () => {
             >
               <Stethoscope size={32} className={`${selectedRole === 'doctor' ? 'scale-110' : ''} transition-transform duration-500`} />
               <span className="font-black text-xs uppercase tracking-widest">{t('doctor')}</span>
-              {selectedRole === 'doctor' && <div className="absolute top-2 right-2 w-2 h-2 bg-primary-600 rounded-full"></div>}
+              {selectedRole === 'doctor' && <div className="absolute top-2 end-2 w-2 h-2 bg-primary-600 rounded-full"></div>}
             </button>
           </div>
 
@@ -119,10 +119,10 @@ const Register = () => {
             <div className="space-y-3">
               <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('first_name_label')}</label>
               <div className="relative">
-                <User className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
+                <User className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
                 <input
                   {...register('first_name')}
-                  className="w-full pl-14 pr-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
+                  className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
                   placeholder={t('placeholder_first_name')}
                 />
               </div>
@@ -131,10 +131,10 @@ const Register = () => {
             <div className="space-y-3">
               <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('last_name_label')}</label>
               <div className="relative">
-                <User className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
+                <User className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
                 <input
                   {...register('last_name')}
-                  className="w-full pl-14 pr-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
+                  className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
                   placeholder={t('placeholder_last_name')}
                 />
               </div>
@@ -145,11 +145,11 @@ const Register = () => {
           <div className="space-y-3">
             <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('email_label')}</label>
             <div className="relative">
-              <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
+              <Mail className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
               <input
                 {...register('email')}
                 type="email"
-                className="w-full pl-14 pr-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
+                className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
                 placeholder="votre@email.com"
               />
             </div>
@@ -159,11 +159,11 @@ const Register = () => {
           <div className="space-y-3">
             <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('password_label')}</label>
             <div className="relative">
-              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
+              <Lock className="absolute start-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" size={20} />
               <input
                 {...register('password')}
                 type="password"
-                className="w-full pl-14 pr-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
+                className="w-full ps-14 pe-6 py-4.5 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white font-bold"
                 placeholder="••••••••"
               />
             </div>
