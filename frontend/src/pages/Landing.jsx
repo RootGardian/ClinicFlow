@@ -95,7 +95,7 @@ const Landing = () => {
                      <div className="flex items-center gap-1 text-yellow-500 mb-1">
                        {[1,2,3,4,5].map(i => <Star key={i} size={12} fill="currentColor" />)}
                      </div>
-                     50,000+ {t('happy_patients') || 'patients satisfaits'}
+                     {t('happy_patients')}
                    </div>
                 </div>
               </motion.div>
@@ -123,8 +123,8 @@ const Landing = () => {
                     <Video size={24} />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">{t('high_quality') || 'Haute Qualité'}</p>
-                    <p className="text-sm font-black text-gray-900 dark:text-white">HD Video Call</p>
+                    <p className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">{t('high_quality')}</p>
+                    <p className="text-sm font-black text-gray-900 dark:text-white">{t('hd_video_call')}</p>
                   </div>
                 </motion.div>
 
@@ -137,8 +137,8 @@ const Landing = () => {
                     <Shield size={24} />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">{t('secure') || 'Sécurisé'}</p>
-                    <p className="text-sm font-black text-gray-900 dark:text-white">256-bit AES Encryption</p>
+                    <p className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">{t('secure')}</p>
+                    <p className="text-sm font-black text-gray-900 dark:text-white">{t('aes_encryption')}</p>
                   </div>
                 </motion.div>
               </motion.div>
@@ -209,7 +209,7 @@ const Landing = () => {
 
             <div className="mt-24 text-center">
                <button className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-black hover:gap-4 transition-all">
-                  Découvrir toutes nos fonctionnalités
+                  {t('discover_features')}
                   <ChevronRight size={20} />
                </button>
             </div>
@@ -221,13 +221,15 @@ const Landing = () => {
            <div className="max-w-7xl mx-auto bg-slate-900 dark:bg-slate-900 rounded-[4rem] p-12 lg:p-24 text-center relative overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
               <div className="relative z-10">
-                <h2 className="text-4xl lg:text-7xl font-black text-white mb-10 tracking-tight leading-[0.95]">Prêt à prendre soin de <br/> votre santé ?</h2>
+                <h2 className="text-4xl lg:text-7xl font-black text-white mb-10 tracking-tight leading-[0.95]">
+                  {t('ready_to_care_title')}
+                </h2>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                   <Link to="/register" className="w-full sm:w-auto bg-white text-slate-900 px-12 py-5 rounded-[2rem] text-lg font-black hover:bg-primary-50 transition-all active:scale-95 shadow-xl">
-                    S'inscrire gratuitement
+                    {t('register_free')}
                   </Link>
                   <Link to="/contact" className="w-full sm:w-auto border-2 border-white/20 text-white px-12 py-5 rounded-[2rem] text-lg font-black hover:bg-white/10 transition-all active:scale-95">
-                    Contacter le support
+                    {t('contact_support')}
                   </Link>
                 </div>
               </div>

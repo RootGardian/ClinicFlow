@@ -98,6 +98,7 @@
   "prescription_received": "Prescription Received",
   "appointment_validated_msg": "Your appointment with Dr. {{name}} has been validated.",
   "prescription_generated_msg": "Dr. {{name}} has generated your prescription.",
+  "happy_patients": "happy patients",
   "specialty_placeholder": "Specialty (e.g. Cardiologist, Dentist...)",
   "search": "Search",
   "no_doctors_found": "No doctors found for this search.",
@@ -181,6 +182,10 @@
   "born_on": "Born on",
   "verified_account": "VERIFIED ACCOUNT",
   "available_balance": "Available balance",
+  "high_quality": "High Quality",
+  "secure": "Secure",
+  "hd_video_call": "HD Video Call",
+  "aes_encryption": "256-bit AES Encryption",
   "withdraw_earnings": "Withdraw my earnings",
   "this_month": "This month",
   "total_consultations": "Consultations",
@@ -403,5 +408,9 @@
     { "q": "How to book an appointment?", "a": "Search for a doctor, choose a slot, and confirm. It's that simple!" },
     { "q": "Are consultations reimbursed?", "a": "Yes, most insurance companies in Morocco are starting to cover telemedicine." },
     { "q": "Is my data secure?", "a": "Absolutely. We comply with CNDP standards and use SSL encryption." }
-  ]
+  ],
+  "discover_features": "Discover all our features",
+  "ready_to_care_title": "Ready to take care of your health?",
+  "register_free": "Register for free",
+  "contact_support": "Contact support"
 }

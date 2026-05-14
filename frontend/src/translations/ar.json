@@ -98,6 +98,7 @@
   "prescription_received": "تم استلام وصفة طبية",
   "appointment_validated_msg": "تم تأكيد موعدك مع الدكتور {{name}}.",
   "prescription_generated_msg": "قام الدكتور {{name}} بإصدار وصفتك الطبية.",
+  "happy_patients": "مرضى راضون",
   "specialty_placeholder": "التخصص (مثلاً: طبيب قلب، طبيب أسنان...)",
   "search": "بحث",
   "no_doctors_found": "لم يتم العثور على أطباء لهذا البحث.",
@@ -181,6 +182,10 @@
   "born_on": "ولد في",
   "verified_account": "حساب موثق",
   "available_balance": "الرصيد المتاح",
+  "high_quality": "جودة عالية",
+  "secure": "آمن",
+  "hd_video_call": "مكالمة فيديو HD",
+  "aes_encryption": "تشفير AES 256 بت",
   "withdraw_earnings": "سحب أرباحي",
   "this_month": "هذا الشهر",
   "total_consultations": "الاستشارات",
@@ -403,5 +408,9 @@
     { "q": "كيف يمكنني حجز موعد؟", "a": "ابحث عن طبيب، اختر الموعد المناسب ثم أكد الحجز. الأمر بسيط للغاية!" },
     { "q": "هل يتم تعويض الاستشارات؟", "a": "نعم، بدأت معظم شركات التأمين في المغرب بتغطية الاستشارات عن بعد." },
     { "q": "هل بياناتي آمنة؟", "a": "بالتأكيد. نحن نلتزم بمعايير CNDP ونستخدم تقنيات التشفير SSL." }
-  ]
+  ],
+  "discover_features": "اكتشف جميع ميزاتنا",
+  "ready_to_care_title": "هل أنت مستعد للعناية بصحتك؟",
+  "register_free": "سجل مجاناً",
+  "contact_support": "اتصل بالدعم"
 }
