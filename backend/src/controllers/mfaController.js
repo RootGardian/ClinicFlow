@@ -1,5 +1,4 @@
-const { authenticator } = require('otplib');
-const qrcode = require('qrcode');
+const otplib = require('otplib');
 const prisma = require('../config/db');
 
 // Setup MFA: Generate secret and return QR code
@@ -13,26 +12,19 @@ exports.setupMFA = async (req, res) => {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
-    // Generate a unique secret for the user
-    const secret = authenticator.generateSecret();
-    
-    // Create the otpauth URI
-    const otpauth = authenticator.keyuri(
-      user.email,
-      'ClinicFlow',
+    const secret = otplib.generateSecret();
+    const otpauth = otplib.generateURI({
+      issuer: 'ClinicFlow',
+      accountName: user.email,
       secret
-    );
+    });
 
-    // Save secret temporarily (we will enable it only after verification)
     await prisma.user.update({
       where: { id: req.user.id },
       data: { mfa_secret: secret }
     });
 
-    res.json({
-      secret,
-      otpauth
-    });
+    res.json({ secret, otpauth });
   } catch (error) {
     console.error("MFA Setup Error:", error);
     res.status(500).json({ message: "Erreur lors de la configuration du MFA" });
@@ -52,16 +44,12 @@ exports.verifyMFA = async (req, res) => {
       return res.status(400).json({ message: "Configuration MFA inexistante" });
     }
 
-    const isValid = authenticator.verify({
-      token,
-      secret: user.mfa_secret
-    });
+    const result = otplib.verifySync({ token, secret: user.mfa_secret });
 
-    if (!isValid) {
+    if (!result.valid) {
       return res.status(400).json({ message: "Code invalide. Veuillez réessayer." });
     }
 
-    // Enable MFA
     await prisma.user.update({
       where: { id: req.user.id },
       data: { mfa_enabled: true }
@@ -107,9 +95,12 @@ exports.initMandatoryMFA = async (req, res) => {
     
     if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-    // Use existing secret if any, otherwise generate new
-    const secret = user.mfa_secret || authenticator.generateSecret();
-    const otpauth = authenticator.keyuri(user.email, 'ClinicFlow', secret);
+    const secret = user.mfa_secret || otplib.generateSecret();
+    const otpauth = otplib.generateURI({
+      issuer: 'ClinicFlow',
+      accountName: user.email,
+      secret
+    });
 
     await prisma.user.update({
       where: { id: user.id },
@@ -137,12 +128,9 @@ exports.verifyLoginMFA = async (req, res) => {
       return res.status(400).json({ message: "MFA non configuré pour cet utilisateur" });
     }
 
-    const isValid = authenticator.verify({
-      token,
-      secret: user.mfa_secret
-    });
+    const result = otplib.verifySync({ token, secret: user.mfa_secret });
 
-    if (!isValid) {
+    if (!result.valid) {
       return res.status(400).json({ message: "Code MFA invalide" });
     }
 
