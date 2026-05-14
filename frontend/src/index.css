@@ -72,41 +72,41 @@ body {
 }
 
 /* Global utility overrides for Dark Mode to force the theme */
-.dark .bg-white {
-  background-color: var(--bg-surface) !important;
+.dark .bg-white:not(.no-dark-override) {
+  background-color: var(--bg-surface);
 }
 
-.dark .bg-gray-50 {
-  background-color: #020617 !important;
+.dark .bg-gray-50:not(.no-dark-override) {
+  background-color: #020617;
 }
 
 .dark .text-gray-900 {
-  color: var(--text-main) !important;
+  color: var(--text-main);
 }
 
 .dark .text-gray-800 {
-  color: var(--text-main) !important;
+  color: var(--text-main);
 }
 
 .dark .text-gray-700 {
-  color: #cbd5e1 !important; /* Slate 300 */
+  color: #cbd5e1; /* Slate 300 */
 }
 
 .dark .text-gray-600 {
-  color: #94a3b8 !important; /* Slate 400 */
+  color: #94a3b8; /* Slate 400 */
 }
 
 .dark .text-gray-500 {
-  color: #64748b !important; /* Slate 500 */
+  color: #64748b; /* Slate 500 */
 }
 
 .dark .border-gray-100, 
 .dark .border-gray-200 {
-  border-color: var(--border-color) !important;
+  border-color: var(--border-color);
 }
 
 .dark .shadow-sm {
-  box-shadow: var(--card-shadow) !important;
+  box-shadow: var(--card-shadow);
 }
 
 /* Animations */

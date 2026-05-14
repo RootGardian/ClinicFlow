@@ -100,6 +100,11 @@ const PatientLayout = ({ children }) => {
               );
             })}
           </nav>
+
+          <div className="lg:hidden mt-6 pt-6 border-t border-gray-100 dark:border-slate-800">
+            <p className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-4">{t('language') || 'Langue'}</p>
+            <LanguageSwitcher />
+          </div>
         </div>
 
         <div className="mt-auto p-6 border-t border-gray-100 dark:border-slate-800">
@@ -147,7 +152,9 @@ const PatientLayout = ({ children }) => {
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            <LanguageSwitcher />
+            <div className="hidden lg:block">
+              <LanguageSwitcher />
+            </div>
 
             {/* Notification Bell */}
             <div className="relative">

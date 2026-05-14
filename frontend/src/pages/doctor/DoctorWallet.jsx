@@ -82,10 +82,10 @@ const DoctorWallet = () => {
           </div>
           <button 
             onClick={handleWithdraw}
-            className="bg-white text-slate-900 px-10 py-5 rounded-[1.5rem] font-black hover:bg-primary-50 transition-all flex items-center gap-3 shadow-2xl active:scale-95 group/btn"
+            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-10 py-5 rounded-[1.5rem] font-black hover:bg-primary-600 dark:hover:bg-primary-50 transition-all flex items-center gap-3 shadow-2xl active:scale-95 group/btn"
           >
             <CreditCard size={22} className="group-hover/btn:rotate-12 transition-transform" />
-            {t('withdraw_earnings')}
+            {t('withdraw_earnings') || 'Retirer mes revenus'}
           </button>
         </div>
         

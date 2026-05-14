@@ -78,23 +78,23 @@ const DoctorProfile = () => {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-slate-800 p-8 md:p-12 transition-colors pb-20"
     >
-      <div className="flex flex-col md:flex-row items-center gap-8 mb-12 pb-12 border-b border-gray-50 dark:border-slate-800">
-        <div className="relative group">
-          <div className="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 flex items-center justify-center overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl group-hover:scale-105 transition-transform duration-500">
+      <div className="flex flex-col md:flex-row items-center gap-10 mb-12 pb-12 border-b border-gray-50 dark:border-slate-800">
+        <div className="relative group shrink-0">
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-[3rem] bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 flex items-center justify-center overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl group-hover:scale-105 transition-all duration-500">
             {avatarPreview ? (
               <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
-              <UserCircle size={64} className="text-primary-600/30" />
+              <UserCircle size={80} className="text-primary-600/30 dark:text-primary-400/20" />
             )}
           </div>
-          <label className="absolute -bottom-2 -right-2 bg-primary-600 p-3 rounded-2xl shadow-xl cursor-pointer hover:bg-primary-700 hover:scale-110 transition-all text-white border-2 border-white dark:border-slate-900">
+          <label className="absolute -bottom-2 -right-2 bg-primary-600 p-3.5 rounded-2xl shadow-xl cursor-pointer hover:bg-primary-700 hover:scale-110 transition-all text-white border-4 border-white dark:border-slate-900">
             <Camera size={20} />
             <input type="file" className="hidden" onChange={handleAvatarChange} accept="image/*" />
           </label>
         </div>
-        <div className="text-center md:text-left">
-          <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">{t('profile_photo') || 'Photo de Profil'}</h2>
-          <p className="text-gray-500 dark:text-slate-400 font-medium max-w-xs">{t('avatar_specs') || 'Utilisez une photo professionnelle pour inspirer confiance à vos patients.'}</p>
+        <div className="text-center md:text-left space-y-3">
+          <h2 className="text-3xl font-black text-gray-900 dark:text-white leading-tight">{t('profile_photo') || 'Photo de Profil'}</h2>
+          <p className="text-gray-500 dark:text-slate-400 font-medium max-w-sm leading-relaxed">{t('avatar_specs') || 'Utilisez une photo professionnelle pour inspirer confiance à vos patients.'}</p>
         </div>
       </div>
 
