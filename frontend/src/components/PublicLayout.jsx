@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Activity, Mail, Phone, MapPin, Globe, Share2, Sun, Moon, ShieldCheck } from 'lucide-react';
+import { Activity, Mail, Phone, MapPin, Globe, Share2, Sun, Moon, ShieldCheck, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTheme } from '../context/ThemeContext';
@@ -8,9 +8,45 @@ import { useTheme } from '../context/ThemeContext';
 const PublicLayout = ({ children }) => {
   const { t } = useTranslation();
   const { isDarkMode, toggleTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col transition-colors duration-300 relative">
+      {/* Mobile Navigation Overlay */}
+      {isMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/50 backdrop-blur-md z-[60] lg:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu Sidebar */}
+      <div className={`fixed top-0 end-0 h-full w-72 bg-white dark:bg-slate-950 z-[70] lg:hidden transition-transform duration-300 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} border-s border-gray-100 dark:border-slate-800 shadow-2xl`}>
+        <div className="p-6 flex flex-col h-full">
+          <div className="flex justify-between items-center mb-10">
+            <span className="font-black text-xl text-primary-600">Menu</span>
+            <button onClick={() => setIsMenuOpen(false)} className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl">
+              <X size={24} />
+            </button>
+          </div>
+          
+          <nav className="flex flex-col gap-6 flex-1">
+            <Link to="/features" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors">{t('nav_features')}</Link>
+            <Link to="/pricing" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors">{t('nav_pricing')}</Link>
+            <Link to="/about" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors">{t('nav_about')}</Link>
+            <Link to="/security" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-primary-600 transition-colors">{t('nav_security')}</Link>
+            <div className="pt-6 border-t border-gray-100 dark:border-slate-800">
+              <LanguageSwitcher />
+            </div>
+          </nav>
+
+          <div className="pt-6 border-t border-gray-100 dark:border-slate-800 mt-auto">
+            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block text-center py-4 text-gray-900 dark:text-white font-black">{t('login')}</Link>
+            <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block text-center bg-primary-600 text-white py-4 rounded-2xl font-black mt-2">{t('register')}</Link>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation */}
       <nav className="border-b border-gray-50 dark:border-slate-800 py-5 px-6 md:px-10 flex justify-between items-center sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-50">
         <Link to="/" className="flex items-center gap-2">
@@ -41,6 +77,13 @@ const PublicLayout = ({ children }) => {
             <Link to="/login" className="text-sm font-black text-gray-900 dark:text-white hover:text-primary-600 transition-colors">{t('login')}</Link>
             <Link to="/register" className="hidden md:block bg-primary-600 text-white px-8 py-3 rounded-xl text-sm font-black hover:bg-primary-700 transition-all shadow-xl shadow-primary-600/20 active:scale-95">{t('register')}</Link>
           </div>
+
+          <button 
+            onClick={() => setIsMenuOpen(true)}
+            className="lg:hidden p-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl text-gray-500 dark:text-slate-400"
+          >
+            <Menu size={24} />
+          </button>
         </div>
       </nav>
 

@@ -12,7 +12,9 @@ import {
   Upload,
   Sparkles,
   Sun,
-  Moon
+  Moon,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -42,19 +44,42 @@ const PatientLayout = ({ children }) => {
 
   const [showNotifications, setShowNotifications] = React.useState(false);
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
+  // Close sidebar on route change (mobile)
+  React.useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300 relative">
+      {/* Sidebar Overlay (Mobile only) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 lg:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-slate-900 border-e border-gray-100 dark:border-slate-800 flex flex-col fixed inset-y-0 start-0 h-full z-20 transition-all duration-300">
-        <div className="p-6">
-          <Link to="/" className="flex items-center gap-2 mb-10">
-            <div className="bg-primary-600 p-1.5 rounded-lg">
-              <Activity className="text-white" size={20} />
-            </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-white">ClinicFlow</span>
-          </Link>
+      <aside className={`w-64 bg-white dark:bg-slate-900 border-e border-gray-100 dark:border-slate-800 flex flex-col fixed inset-y-0 start-0 h-full z-40 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="p-6 flex-1 flex flex-col">
+          <div className="flex items-center justify-between mb-10">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="bg-primary-600 p-1.5 rounded-lg">
+                <Activity className="text-white" size={20} />
+              </div>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">ClinicFlow</span>
+            </Link>
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg"
+            >
+              <X size={20} />
+            </button>
+          </div>
 
           <nav className="space-y-1">
             {menuItems.map((item) => {
@@ -89,8 +114,23 @@ const PatientLayout = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ms-64 p-8 transition-all duration-300 min-h-screen">
-        <header className="flex justify-between items-center mb-10">
+      <main className="flex-1 lg:ms-64 p-4 md:p-8 transition-all duration-300 min-h-screen">
+        {/* Mobile Header Top Bar */}
+        <div className="lg:hidden flex items-center justify-between mb-6 bg-white dark:bg-slate-950 p-2 -mx-4 border-b border-gray-100 dark:border-slate-800 sticky top-0 z-10">
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl"
+          >
+            <Menu size={24} />
+          </button>
+          <div className="flex items-center gap-2">
+            <Activity className="text-primary-600" size={20} />
+            <span className="font-bold text-gray-900 dark:text-white">ClinicFlow</span>
+          </div>
+          <div className="w-10"></div> {/* Spacer for balance */}
+        </div>
+
+        <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8 md:mb-10">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white leading-tight">
               {menuItems.find(i => i.path === location.pathname)?.label || t('patient')}
