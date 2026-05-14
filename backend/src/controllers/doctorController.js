@@ -264,7 +264,11 @@ exports.createPrescription = async (req, res) => {
       }
     });
 
-    if (!appointment) return res.status(404).json({ message: 'RDV non trouvé.' });
+    const doctor = await prisma.doctor.findUnique({ where: { user_id: req.user.id } });
+
+    if (!appointment || appointment.doctor_id !== doctor.id) {
+      return res.status(403).json({ message: 'Accès refusé. Ce rendez-vous ne vous est pas assigné.' });
+    }
 
     // Créer la consultation si elle n'existe pas
     let consultation = await prisma.consultation.findUnique({ where: { appointment_id: appointment.id } });
@@ -385,9 +389,17 @@ exports.updateAppointmentStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    const appId = parseInt(id);
+
+    const doctor = await prisma.doctor.findUnique({ where: { user_id: req.user.id } });
+    const checkApp = await prisma.appointment.findUnique({ where: { id: appId } });
+
+    if (!checkApp || checkApp.doctor_id !== doctor.id) {
+      return res.status(403).json({ message: "Accès refusé. Ce rendez-vous ne vous appartient pas." });
+    }
 
     const appointment = await prisma.appointment.update({
-      where: { id: parseInt(id) },
+      where: { id: appId },
       data: { status },
       include: { 
         patient: { include: { user: true } },
@@ -412,6 +424,13 @@ exports.deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
     const appId = parseInt(id);
+
+    const doctor = await prisma.doctor.findUnique({ where: { user_id: req.user.id } });
+    const checkApp = await prisma.appointment.findUnique({ where: { id: appId } });
+
+    if (!checkApp || checkApp.doctor_id !== doctor.id) {
+      return res.status(403).json({ message: "Accès refusé. Vous ne pouvez supprimer que vos propres rendez-vous." });
+    }
 
     // Supprimer les dépendances pour éviter l'erreur de contrainte de clé étrangère
     await prisma.prescription.deleteMany({ where: { appointment_id: appId } });

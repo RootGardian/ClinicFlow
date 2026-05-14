@@ -72,37 +72,11 @@ app.get('/', (req, res) => {
   res.send('API Télémédecine opérationnelle avec Socket.io 🚀');
 });
 
-const rateLimit = require('express-rate-limit');
-
-// Rate limiter global (A07/A10)
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limite chaque IP à 100 requêtes par fenêtre
-  message: { message: "Trop de requêtes, veuillez réessayer plus tard." }
-});
-
-// Rate limiter strict pour l'authentification
-const authStore = new rateLimit.MemoryStore();
-const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 heure
-  max: 10, // 10 tentatives max
-  message: { message: "Trop de tentatives de connexion, compte temporairement bloqué." },
-  store: authStore
-});
-
-app.use('/api/', globalLimiter);
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', authLimiter);
-
-// Rendre le store accessible pour réinitialisation administrative
-app.set('authStore', authStore);
+const { apiLimiter } = require('./middlewares/rateLimitMiddleware');
+app.use('/api/', apiLimiter);
 
 // Import des routes
-console.log(`[${new Date().toLocaleTimeString()}] Initialisation des services IA...`);
-const { protect } = require('./middlewares/authMiddleware');
-const aiController = require('./controllers/aiController');
-app.post('/api/ai/analyze-symptoms', protect, aiController.analyzeSymptoms);
-app.get('/api/ai-test', (req, res) => res.json({ status: "ready" }));
+console.log(`[${new Date().toLocaleTimeString()}] Initialisation des routes sécurisées...`);
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/doctor', require('./routes/doctorRoutes'));

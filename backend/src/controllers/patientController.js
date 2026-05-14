@@ -183,6 +183,14 @@ const deleteAppointment = async (req, res) => {
     const { id } = req.params;
     const appId = parseInt(id);
 
+    // Vérifier que le RDV appartient au patient
+    const patient = await prisma.patient.findUnique({ where: { user_id: req.user.id } });
+    const appointment = await prisma.appointment.findUnique({ where: { id: appId } });
+
+    if (!appointment || appointment.patient_id !== patient.id) {
+      return res.status(403).json({ message: "Accès refusé. Vous ne pouvez supprimer que vos propres rendez-vous." });
+    }
+
     // Supprimer les dépendances pour éviter l'erreur de contrainte de clé étrangère
     await prisma.prescription.deleteMany({ where: { appointment_id: appId } });
     await prisma.consultation.deleteMany({ where: { appointment_id: appId } });
@@ -255,9 +263,17 @@ const getSecureDocument = async (req, res) => {
 const deleteMedicalDocument = async (req, res) => {
   try {
     const { id } = req.params;
-    const document = await prisma.medicalDocument.findUnique({ where: { id: parseInt(id) } });
+    const docId = parseInt(id);
 
-    if (!document) return res.status(404).json({ message: 'Document non trouvé.' });
+    const patient = await prisma.patient.findUnique({ where: { user_id: req.user.id } });
+    const document = await prisma.medicalDocument.findUnique({ 
+      where: { id: docId },
+      include: { patient: true }
+    });
+
+    if (!document || document.patient_id !== patient.id) {
+      return res.status(403).json({ message: "Accès refusé. Vous ne pouvez supprimer que vos propres documents." });
+    }
 
     // Supprimer le fichier physique
     const filePath = path.join(__dirname, '../../', document.file_url);
@@ -266,7 +282,7 @@ const deleteMedicalDocument = async (req, res) => {
     }
 
     // Supprimer de la base
-    await prisma.medicalDocument.delete({ where: { id: parseInt(id) } });
+    await prisma.medicalDocument.delete({ where: { id: docId } });
 
     res.json({ message: 'Document supprimé avec succès.' });
   } catch (error) {

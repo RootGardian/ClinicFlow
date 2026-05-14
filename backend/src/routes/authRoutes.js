@@ -4,14 +4,15 @@ const { register, login, getMe, getNotifications, markNotificationAsRead, update
 const { protect } = require('../middlewares/authMiddleware');
 const { registerValidationRules, validate } = require('../middlewares/validator');
 const upload = require('../middlewares/uploadMiddleware');
+const { authLimiter } = require('../middlewares/rateLimitMiddleware');
 
-router.post('/register', registerValidationRules(), validate, register);
-router.post('/login', login);
+router.post('/register', authLimiter, registerValidationRules(), validate, register);
+router.post('/login', authLimiter, login);
 router.get('/me', protect, getMe);
 router.get('/notifications', protect, getNotifications);
 router.put('/notifications/:id', protect, markNotificationAsRead);
 router.put('/avatar', protect, upload.single('avatar'), updateAvatar);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.post('/forgot-password', authLimiter, forgotPassword);
+router.post('/reset-password', authLimiter, resetPassword);
 
 module.exports = router;

@@ -27,6 +27,12 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
+    // 1. Détection de double extension (Sécurité contre l'exécution de scripts cachés)
+    if (file.originalname.split('.').length > 2) {
+      return cb(new Error('Double extension détectée. Téléchargement refusé pour des raisons de sécurité.'));
+    }
+
+    // 2. Validation stricte du type MIME et de l'extension
     const filetypes = /jpeg|jpg|png|pdf/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);

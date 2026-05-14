@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const aiController = require('../controllers/aiController');
 const { protect } = require('../middlewares/authMiddleware');
+const { aiLimiter } = require('../middlewares/rateLimitMiddleware');
 
 // Route protégée pour l'analyse des symptômes
-// Route de test sans protection pour diagnostic
-router.post('/analyze-symptoms', protect, aiController.analyzeSymptoms);
+router.post('/analyze-symptoms', protect, aiLimiter, aiController.analyzeSymptoms);
 
 module.exports = router;
