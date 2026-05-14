@@ -418,5 +418,22 @@
   "sort_rating": "Mieux notés",
   "sort_price_asc": "Prix croissant",
   "sort_price_desc": "Prix décroissant",
-  "sort_experience": "Expérience"
+  "sort_experience": "Expérience",
+  "doctors_found": "médecins trouvés",
+  "consultation_fee": "Prix de la consultation",
+  "available": "Disponible",
+  "address_label": "Adresse",
+  "phone_label": "Téléphone",
+  "Pédiatre": "Pédiatre",
+  "Neurologue": "Neurologue",
+  "Psychiatre": "Psychiatre",
+  "Gastro-entérologue": "Gastro-entérologue",
+  "Orthopédiste": "Orthopédiste",
+  "Rhumatologue": "Rhumatologue",
+  "Cardiologue": "Cardiologue",
+  "Dentiste": "Dentiste",
+  "finalize_profile_title": "Finalisons votre profil",
+  "finalize_profile_sub": "Bienvenue sur ClinicFlow. Quelques informations pour personnaliser votre expérience santé et vous offrir le meilleur suivi.",
+  "professional_profile": "Profil Professionnel",
+  "finish_registration": "Terminer mon inscription"
 }

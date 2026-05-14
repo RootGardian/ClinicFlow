@@ -417,5 +417,22 @@
   "sort_rating": "الأعلى تقييماً",
   "sort_price_asc": "الأقل سعراً",
   "sort_price_desc": "الأعلى سعراً",
-  "sort_experience": "الأكثر خبرة"
+  "sort_experience": "الأكثر خبرة",
+  "doctors_found": "طبيب تم العثور عليهم",
+  "consultation_fee": "سعر الاستشارة",
+  "available": "متاح",
+  "address_label": "العنوان",
+  "phone_label": "رقم الهاتف",
+  "Pédiatre": "طبيب أطفال",
+  "Neurologue": "طبيب أعصاب",
+  "Psychiatre": "طبيب نفسي",
+  "Gastro-entérologue": "طبيب الجهاز الهضمي",
+  "Orthopédiste": "طبيب العظام",
+  "Rhumatologue": "طبيب الروماتيزم",
+  "Cardiologue": "طبيب قلب",
+  "Dentiste": "طبيب أسنان",
+  "finalize_profile_title": "لنكمل ملفك الشخصي",
+  "finalize_profile_sub": "مرحباً بك في ClinicFlow. بضع معلومات لتخصيص تجربتك الصحية وتقديم أفضل متابعة لك.",
+  "professional_profile": "الملف المهني",
+  "finish_registration": "إنهاء تسجيلي"
 }

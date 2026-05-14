@@ -417,5 +417,22 @@
   "sort_rating": "Top Rated",
   "sort_price_asc": "Lowest Price",
   "sort_price_desc": "Highest Price",
-  "sort_experience": "Most Experienced"
+  "sort_experience": "Most Experienced",
+  "doctors_found": "doctors found",
+  "consultation_fee": "Consultation Fee",
+  "available": "Available",
+  "address_label": "Address",
+  "phone_label": "Phone Number",
+  "Pédiatre": "Pediatrician",
+  "Neurologue": "Neurologist",
+  "Psychiatre": "Psychiatrist",
+  "Gastro-entérologue": "Gastroenterologist",
+  "Orthopédiste": "Orthopedist",
+  "Rhumatologue": "Rheumatologist",
+  "Cardiologue": "Cardiologist",
+  "Dentiste": "Dentist",
+  "finalize_profile_title": "Let's finalize your profile",
+  "finalize_profile_sub": "Welcome to ClinicFlow. A few details to personalize your health experience and offer you the best follow-up.",
+  "professional_profile": "Professional Profile",
+  "finish_registration": "Finish my registration"
 }

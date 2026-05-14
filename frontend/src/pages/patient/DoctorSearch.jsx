@@ -169,7 +169,9 @@ const DoctorSearch = () => {
                     <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors leading-tight">
                       Dr. {doctor.user.first_name} {doctor.user.last_name}
                     </h3>
-                    <p className="text-sm text-primary-600 dark:text-primary-400 font-bold mt-1">{doctor.specialty || t('general_practitioner')}</p>
+                    <p className="text-sm text-primary-600 dark:text-primary-400 font-bold mt-1">
+                      {t(doctor.specialty) !== doctor.specialty ? t(doctor.specialty) : (doctor.specialty || t('general_practitioner'))}
+                    </p>
                     <div className="flex items-center gap-1.5 text-yellow-500 text-xs mt-2">
                       <Star size={14} fill="currentColor" />
                       <span className="font-black text-gray-900 dark:text-white">4.9</span>

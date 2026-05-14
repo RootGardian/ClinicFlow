@@ -159,26 +159,26 @@ const Onboarding = () => {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-3">
           <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1 flex items-center gap-2">
-            <Phone size={14} className="text-primary-600" /> Téléphone
+            <Phone size={14} className="text-primary-600" /> {t('phone_label') || 'Téléphone'}
           </label>
           <input {...register('phone', { required: true })} className="w-full px-6 py-4.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold" placeholder="+212 ..." />
         </div>
         <div className="space-y-3">
           <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1 flex items-center gap-2">
-            <Calendar size={14} className="text-primary-600" /> Date de naissance
+            <Calendar size={14} className="text-primary-600" /> {t('born_on') || 'Date de naissance'}
           </label>
           <input type="date" {...register('date_of_birth', { required: true })} className="w-full px-6 py-4.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold" />
         </div>
       </div>
       <div className="space-y-3">
         <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1 flex items-center gap-2">
-          <MapPin size={14} className="text-primary-600" /> Adresse
+          <MapPin size={14} className="text-primary-600" /> {t('address_label') || 'Adresse'}
         </label>
         <input {...register('address')} className="w-full px-6 py-4.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold" placeholder="Casablanca, Maarif..." />
       </div>
       <div className="space-y-3">
         <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1 flex items-center gap-2">
-          <Heart size={14} className="text-red-500" /> Allergies
+          <Heart size={14} className="text-red-500" /> {t('allergies_title') || 'Allergies'}
         </label>
         <input {...register('allergies')} className="w-full px-6 py-4.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white font-bold" placeholder="Pénicilline, Pollen... (ou Aucun)" />
       </div>
@@ -201,9 +201,9 @@ const Onboarding = () => {
             <div className="bg-primary-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-10 shadow-xl shadow-primary-600/20">
               <Sparkles size={32} />
             </div>
-            <h1 className="text-4xl font-black mb-6 leading-tight tracking-tight">Finalisons votre profil</h1>
+            <h1 className="text-4xl font-black mb-6 leading-tight tracking-tight">{t('finalize_profile_title') || 'Finalisons votre profil'}</h1>
             <p className="text-slate-400 text-base leading-relaxed font-medium">
-              Bienvenue sur ClinicFlow. Quelques informations pour personnaliser votre expérience santé et vous offrir le meilleur suivi.
+              {t('finalize_profile_sub') || 'Bienvenue sur ClinicFlow. Quelques informations pour personnaliser votre expérience santé et vous offrir le meilleur suivi.'}
             </p>
           </div>
           
@@ -224,7 +224,7 @@ const Onboarding = () => {
         <div className="flex-1 p-10 md:p-20 overflow-y-auto max-h-[90vh] custom-scrollbar">
           <div className="mb-12">
             <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">
-              {user?.role === 'doctor' ? 'Profil Professionnel' : 'Votre Dossier Médical'}
+              {user?.role === 'doctor' ? t('professional_profile') : t('my_medical_record')}
             </h2>
             <div className="h-1.5 w-20 bg-primary-600 rounded-full"></div>
           </div>
@@ -240,7 +240,7 @@ const Onboarding = () => {
               {loading ? (
                 <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                <>Terminer mon inscription <ChevronRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
+                <>{t('finish_registration') || 'Terminer mon inscription'} <ChevronRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
               )}
             </button>
           </form>
