@@ -95,8 +95,16 @@ exports.disableMFA = async (req, res) => {
 // Initialiser MFA obligatoire (sans authentification préalable, utilisé lors du login)
 exports.initMandatoryMFA = async (req, res) => {
   const { userId } = req.body;
+  
+  if (!userId) {
+    return res.status(400).json({ message: "ID utilisateur manquant" });
+  }
+
   try {
-    const user = await prisma.user.findUnique({ where: { id: parseInt(userId) } });
+    const user = await prisma.user.findUnique({ 
+      where: { id: parseInt(userId) } 
+    });
+    
     if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
     // Use existing secret if any, otherwise generate new
@@ -110,8 +118,8 @@ exports.initMandatoryMFA = async (req, res) => {
 
     res.json({ secret, otpauth });
   } catch (error) {
-    console.error("Mandatory MFA Setup Error:", error);
-    res.status(500).json({ message: "Erreur lors de l'initialisation du MFA" });
+    console.error("MFA_INIT_ERROR:", error);
+    res.status(500).json({ message: "Erreur lors de l'initialisation du MFA", error: error.message });
   }
 };
 
