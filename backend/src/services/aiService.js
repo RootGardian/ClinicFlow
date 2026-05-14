@@ -1,7 +1,8 @@
 const axios = require('axios');
 require('dotenv').config();
 
-// Configuration : Groq (primaire, gratuit et rapide) + Gemini (fallback)
+// Configuration : OpenRouter (Gemma 4), Groq (Fallback), Gemini (Fallback)
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -45,7 +46,32 @@ RÉPONDS UNIQUEMENT EN JSON :
   "bookingTime": "HH:mm ou null"
 }`;
 
-// ==================== GROQ (Primaire) ====================
+// ==================== OPENROUTER (Gemma 4 - Défaut) ====================
+const callOpenRouter = async (systemPrompt, userMessage, history = []) => {
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...history.slice(-6),
+    { role: 'user', content: userMessage }
+  ];
+
+  const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+    model: 'google/gemma-4-31b-it:free',
+    messages,
+    temperature: 0.3,
+    max_tokens: 1024
+  }, {
+    headers: {
+      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://clinicflow.maroc', // Optionnel pour OpenRouter
+      'X-Title': 'ClinicFlow' // Optionnel pour OpenRouter
+    }
+  });
+
+  return response.data.choices[0].message.content;
+};
+
+// ==================== GROQ (Fallback) ====================
 const callGroq = async (systemPrompt, userMessage, history = []) => {
   const messages = [
     { role: 'system', content: systemPrompt },
@@ -83,17 +109,27 @@ const callGemini = async (systemPrompt, userMessage, history = []) => {
 
 // ==================== Fonction principale ====================
 const callAI = async (systemPrompt, userMessage, history = []) => {
-  // Essayer Groq en premier (gratuit, rapide, fiable)
+  // 1. Essayer OpenRouter (Gemma 4 par défaut)
+  if (OPENROUTER_API_KEY) {
+    try {
+      console.log("[AI] Appel OpenRouter (Gemma 4)...");
+      return await callOpenRouter(systemPrompt, userMessage, history);
+    } catch (err) {
+      console.error("[AI] OpenRouter échoué:", err.response?.data?.error?.message || err.message);
+    }
+  }
+
+  // 2. Fallback sur Groq
   if (GROQ_API_KEY) {
     try {
-      console.log("[AI] Appel Groq...");
+      console.log("[AI] Fallback Groq...");
       return await callGroq(systemPrompt, userMessage, history);
     } catch (err) {
       console.error("[AI] Groq échoué:", err.response?.data?.error?.message || err.message);
     }
   }
   
-  // Fallback sur Gemini
+  // 3. Fallback sur Gemini
   if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_api_key_here') {
     try {
       console.log("[AI] Fallback Gemini...");
@@ -103,7 +139,7 @@ const callAI = async (systemPrompt, userMessage, history = []) => {
     }
   }
   
-  throw new Error("Aucun fournisseur IA disponible. Configurez GROQ_API_KEY ou GEMINI_API_KEY.");
+  throw new Error("Aucun fournisseur IA disponible. Configurez OPENROUTER_API_KEY, GROQ_API_KEY ou GEMINI_API_KEY.");
 };
 
 // ==================== Services exportés ====================
