@@ -82,6 +82,7 @@ exports.disableMFA = async (req, res) => {
 
 // Initialiser MFA obligatoire (sans authentification préalable, utilisé lors du login)
 exports.initMandatoryMFA = async (req, res) => {
+  const { userId } = req.body;
   if (!userId) {
     return res.status(400).json({ message: "ID utilisateur manquant" });
   }
