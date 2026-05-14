@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Users, Wallet, Video, Clock, CheckCircle, AlertCircle, Trash2, Loader2, ArrowUpRight } from 'lucide-react';
+import { Calendar, Users, Wallet, Video, Clock, CheckCircle, AlertCircle, Trash2, ArrowUpRight } from 'lucide-react';
 import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 import { io } from 'socket.io-client';
 
@@ -96,12 +97,7 @@ const DoctorDashboard = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <Loader2 className="w-12 h-12 text-primary-600 animate-spin" />
-      <p className="text-gray-400 font-medium animate-pulse">{t('loading')}</p>
-    </div>
-  );
+  if (loading) return <LoadingSpinner text={t('loading')} />;
 
   return (
     <div className="space-y-10 pb-10">

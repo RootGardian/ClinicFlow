@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Stethoscope, FileText, DollarSign, Award, 
   Activity, Heart, User, MapPin, Phone, Calendar,
-  UserRound, Users, Briefcase, ChevronRight, Loader2, Sparkles, ShieldCheck
+  UserRound, Users, Briefcase, ChevronRight, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -238,7 +238,7 @@ const Onboarding = () => {
               className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-6 rounded-[2rem] font-black hover:bg-primary-600 dark:hover:bg-primary-500 dark:hover:text-white shadow-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-3 active:scale-95 group"
             >
               {loading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
+                <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>Terminer mon inscription <ChevronRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
               )}

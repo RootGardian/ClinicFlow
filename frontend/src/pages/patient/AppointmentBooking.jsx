@@ -9,11 +9,11 @@ import {
   Video, 
   CheckCircle2,
   AlertCircle,
-  Loader2,
   User
 } from 'lucide-react';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const AppointmentBooking = () => {
   const { t } = useTranslation();
@@ -64,12 +64,7 @@ const AppointmentBooking = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <Loader2 className="w-12 h-12 text-primary-600 animate-spin" />
-      <p className="text-gray-400 font-medium animate-pulse">{t('loading')}</p>
-    </div>
-  );
+  if (loading) return <LoadingSpinner text={t('loading')} />;
 
   if (!doctor) return (
     <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-gray-100 dark:border-slate-800">

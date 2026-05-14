@@ -11,6 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import { io } from 'socket.io-client';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const getSocketUrl = () => {
   const url = import.meta.env.VITE_API_URL || 'https://clinicflow-backend-wi33.onrender.com';
@@ -116,11 +117,7 @@ const AdminDashboard = () => {
     ));
   };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><LoadingSpinner /></div>;
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6 md:p-10">

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Activity, ArrowRight, Stethoscope, UserRound, ShieldCheck, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Activity, ArrowRight, Stethoscope, UserRound, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -175,7 +175,7 @@ const Register = () => {
             disabled={isSubmitting}
             className="w-full bg-slate-900 dark:bg-primary-600 text-white py-5 rounded-[1.5rem] font-black hover:bg-primary-600 dark:hover:bg-primary-700 shadow-2xl shadow-primary-600/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-70 active:scale-95"
           >
-            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+            {isSubmitting ? <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : (
               <>{t('register_btn')} <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
             )}
           </button>

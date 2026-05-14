@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Plus, Trash2, Calendar, Save, Loader2, AlertCircle } from 'lucide-react';
+import { Clock, Plus, Trash2, Calendar, Save, AlertCircle, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const DoctorAgenda = () => {
   const { t } = useTranslation();
@@ -56,12 +57,7 @@ const DoctorAgenda = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <Loader2 className="w-12 h-12 text-primary-600 animate-spin" />
-      <p className="text-gray-400 font-medium animate-pulse">{t('loading')}</p>
-    </div>
-  );
+  if (loading) return <LoadingSpinner text={t('loading')} />;
 
   return (
     <div className="space-y-8 pb-10">
@@ -168,7 +164,7 @@ const DoctorAgenda = () => {
             disabled={saving}
             className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4.5 rounded-[1.5rem] font-black hover:bg-primary-600 dark:hover:bg-primary-500 dark:hover:text-white shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
           >
-            {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save size={20} />}
+            {saving ? <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : <Save size={20} />}
             {t('save_agenda_btn')}
           </button>
         </div>

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, CreditCard, Lock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { ShieldCheck, CreditCard, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 import api from '../../utils/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const stripePromise = loadStripe('pk_test_51TKdreHTTgYbk5AbmdIxHtghkUsUDjUoU2YDiPmV3G80IA0fFBBLvA1eXK1thbthuLl0PiHrCuAU6RVb7EIPJHn3002GBq5FOq');
 
@@ -82,7 +83,7 @@ const CheckoutForm = ({ clientSecret, onResult }) => {
         className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-4.5 rounded-2xl font-bold hover:shadow-xl hover:shadow-primary-600/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
       >
         {loading ? (
-          <Loader2 className="w-6 h-6 animate-spin" />
+          <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
         ) : (
           <>{t('confirm_payment_btn')} <ShieldCheck size={20} /></>
         )}
@@ -151,7 +152,7 @@ const PaymentPage = () => {
             <span className="font-bold text-primary-600 dark:text-primary-400 mt-2 block">{t('redirection_msg')}</span>
           </p>
           <div className="flex justify-center">
-            <Loader2 className="w-10 h-10 text-primary-600 animate-spin" />
+            <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         </motion.div>
       </div>
@@ -159,9 +160,8 @@ const PaymentPage = () => {
   }
 
   if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 gap-4">
-      <Loader2 className="w-12 h-12 text-primary-600 animate-spin" />
-      <p className="text-gray-400 font-medium animate-pulse">{t('loading')}</p>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors">
+      <LoadingSpinner text={t('loading')} />
     </div>
   );
 

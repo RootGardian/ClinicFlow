@@ -7,12 +7,12 @@ import {
   Trash2, 
   AlertCircle, 
   File as FileIcon, 
-  Image as ImageIcon,
-  Loader2
+  Image as ImageIcon
 } from 'lucide-react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 import { io } from 'socket.io-client';
 
@@ -143,12 +143,7 @@ const PatientDocuments = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <Loader2 className="w-12 h-12 text-primary-600 animate-spin" />
-      <p className="text-gray-400 font-medium animate-pulse">{t('loading_docs')}</p>
-    </div>
-  );
+  if (loading) return <LoadingSpinner text={t('loading_docs')} />;
 
   return (
     <div className="space-y-8 pb-10">

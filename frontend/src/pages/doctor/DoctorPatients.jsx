@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, User, Mail, Phone, Calendar, ChevronRight, Loader2, Filter, X, FileText, Activity } from 'lucide-react';
+import { Search, User, Mail, Phone, Calendar, ChevronRight, Filter, X, FileText, Activity } from 'lucide-react';
 import { motion as m, AnimatePresence } from 'framer-motion';
 import api from '../../utils/api';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const DoctorPatients = () => {
   const { t } = useTranslation();
@@ -30,12 +31,7 @@ const DoctorPatients = () => {
     p.user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <Loader2 className="w-12 h-12 text-primary-600 animate-spin" />
-      <p className="text-gray-400 font-medium animate-pulse">{t('loading')}</p>
-    </div>
-  );
+  if (loading) return <LoadingSpinner text={t('loading')} />;
 
   return (
     <div className="space-y-8 pb-10">
