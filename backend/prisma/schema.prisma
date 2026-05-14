@@ -43,6 +43,16 @@ model Doctor {
 
   appointments Appointment[]
   reviews      Review[]
+  withdrawals  Withdrawal[]
+}
+
+model Withdrawal {
+  id         Int      @id @default(autoincrement())
+  doctor_id  Int
+  doctor     Doctor   @relation(fields: [doctor_id], references: [id])
+  amount     Decimal
+  status     String   @default("pending") // pending, completed, rejected
+  created_at DateTime @default(now())
 }
 
 model Availability {

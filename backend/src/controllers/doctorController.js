@@ -35,7 +35,14 @@ exports.getDoctorWallet = async (req, res) => {
       created_at: p.created_at
     }));
 
-    const totalEarnings = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalEarningsRaw = transactions.reduce((sum, t) => sum + t.amount, 0);
+
+    // Soustraire les retraits déjà effectués ou en cours
+    const withdrawals = await prisma.withdrawal.findMany({
+      where: { doctor_id: doctor.id, status: { in: ['pending', 'completed'] } }
+    });
+    const totalWithdrawn = withdrawals.reduce((sum, w) => sum + parseFloat(w.amount), 0);
+    const availableBalance = Math.max(0, totalEarningsRaw - totalWithdrawn);
 
     // Calculer les gains du mois en cours
     const startOfMonth = new Date();
@@ -47,7 +54,7 @@ exports.getDoctorWallet = async (req, res) => {
       .reduce((sum, t) => sum + t.amount, 0);
 
     res.json({
-      totalEarnings: Math.round(totalEarnings * 100) / 100,
+      totalEarnings: Math.round(availableBalance * 100) / 100,
       monthlyEarnings: Math.round(monthlyEarnings * 100) / 100,
       currency: 'MAD',
       transactions
@@ -165,37 +172,50 @@ exports.getDoctorPatients = async (req, res) => {
   }
 };
 
-// Wallet : Gains totaux
-exports.getDoctorWallet = async (req, res) => {
+// Demander un retrait
+exports.requestWithdrawal = async (req, res) => {
   try {
-    const doctor = await prisma.doctor.findUnique({ where: { user_id: req.user.id } });
-    
+    const doctor = await prisma.doctor.findUnique({
+      where: { user_id: req.user.id }
+    });
+
+    if (!doctor) return res.status(404).json({ message: "Médecin non trouvé." });
+
+    // Calculer le solde disponible (Total Succeeded - Total Withdrawn)
+    const FEE_PERCENTAGE = 0.20;
     const payments = await prisma.payment.findMany({
       where: {
-        appointment: { doctor_id: doctor.id },
-        status: 'paid'
+        status: 'succeeded',
+        appointment: { doctor_id: doctor.id }
       }
     });
 
-    const totalEarnings = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
-    
-    // Gains du mois en cours
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0,0,0,0);
-    
-    const monthlyEarnings = payments
-      .filter(p => new Date(p.created_at) >= startOfMonth)
-      .reduce((sum, p) => sum + parseFloat(p.amount), 0);
-    
-    res.json({
-      totalEarnings,
-      monthlyEarnings,
-      currency: 'MAD',
-      transactions: payments
+    const totalEarned = payments.reduce((sum, p) => sum + (parseFloat(p.amount) * (1 - FEE_PERCENTAGE)), 0);
+
+    const withdrawals = await prisma.withdrawal.findMany({
+      where: { doctor_id: doctor.id, status: { in: ['pending', 'completed'] } }
     });
+
+    const totalWithdrawn = withdrawals.reduce((sum, w) => sum + parseFloat(w.amount), 0);
+    const availableBalance = totalEarned - totalWithdrawn;
+
+    if (availableBalance <= 0) {
+      return res.status(400).json({ message: "Votre solde est insuffisant pour effectuer un retrait." });
+    }
+
+    // Créer la demande de retrait
+    const withdrawal = await prisma.withdrawal.create({
+      data: {
+        doctor_id: doctor.id,
+        amount: availableBalance,
+        status: 'pending'
+      }
+    });
+
+    res.json({ message: "Demande de retrait envoyée avec succès.", withdrawal });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error("Withdrawal Error:", error);
+    res.status(500).json({ message: 'Erreur lors de la demande de retrait.' });
   }
 };
 

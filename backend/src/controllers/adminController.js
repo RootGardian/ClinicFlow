@@ -124,13 +124,21 @@ exports.toggleUserStatus = async (req, res) => {
 exports.resetAllRateLimits = async (req, res) => {
   try {
     const authStore = req.app.get('authStore');
+    console.log('[DEBUG] authStore found:', !!authStore);
+    
     if (authStore && typeof authStore.resetAll === 'function') {
       await authStore.resetAll();
+      console.log('[DEBUG] Rate limits reset successfully');
       res.json({ message: 'Tous les blocages temporaires ont été levés.' });
     } else {
+      console.error('[DEBUG] authStore or resetAll missing', { 
+        hasStore: !!authStore, 
+        type: authStore ? typeof authStore.resetAll : 'n/a' 
+      });
       res.status(500).json({ message: 'Le service de limitation n\'est pas accessible.' });
     }
   } catch (error) {
+    console.error('[DEBUG] Error in resetAllRateLimits:', error);
     res.status(500).json({ message: 'Erreur lors de la réinitialisation des blocages.', error: error.message });
   }
 };

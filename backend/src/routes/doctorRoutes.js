@@ -6,6 +6,7 @@ const {
   setAvailabilities, 
   getDoctorPatients, 
   getDoctorWallet,
+  requestWithdrawal,
   getAllDoctors,
   createPrescription,
   getDoctorAppointments,
@@ -28,6 +29,7 @@ router.put('/profile', doctorProfileValidationRules(), validate, updateDoctorPro
 router.post('/availabilities', setAvailabilities);
 router.get('/patients', getDoctorPatients);
 router.get('/wallet', getDoctorWallet);
+router.post('/withdraw', requestWithdrawal);
 router.post('/prescription', createPrescription);
 router.get('/appointments', getDoctorAppointments);
 router.put('/appointments/:id/status', updateAppointmentStatus);

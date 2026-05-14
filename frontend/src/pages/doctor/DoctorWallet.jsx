@@ -3,6 +3,7 @@ import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, CreditCard, ArrowUpRight, ArrowDownRight, History, Loader2, ShieldCheck, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 import { io } from 'socket.io-client';
 
@@ -25,6 +26,20 @@ const DoctorWallet = () => {
       console.error("Erreur lors de la récupération du portefeuille:", err);
     }
     setLoading(false);
+  };
+
+  const handleWithdraw = async () => {
+    if ((data?.totalEarnings || 0) <= 0) {
+      return toast.error("Votre solde est insuffisant.");
+    }
+
+    try {
+      await api.post('/doctor/withdraw');
+      toast.success("Demande de retrait envoyée ! Elle sera traitée sous 24h.");
+      fetchWallet();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Erreur lors du retrait.");
+    }
   };
 
   useEffect(() => {
@@ -69,7 +84,10 @@ const DoctorWallet = () => {
             <h2 className="text-6xl font-black tracking-tighter">{(data?.totalEarnings || 0).toLocaleString()}</h2>
             <span className="text-2xl font-bold text-slate-500 dark:text-primary-200 uppercase">{data?.currency || 'MAD'}</span>
           </div>
-          <button className="bg-white text-slate-900 px-10 py-5 rounded-[1.5rem] font-black hover:bg-primary-50 transition-all flex items-center gap-3 shadow-2xl active:scale-95 group/btn">
+          <button 
+            onClick={handleWithdraw}
+            className="bg-white text-slate-900 px-10 py-5 rounded-[1.5rem] font-black hover:bg-primary-50 transition-all flex items-center gap-3 shadow-2xl active:scale-95 group/btn"
+          >
             <CreditCard size={22} className="group-hover/btn:rotate-12 transition-transform" />
             {t('withdraw_earnings')}
           </button>
