@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../utils/api';
+import { QRCodeSVG } from 'qrcode.react';
 
 const Login = () => {
   const { t } = useTranslation();
@@ -20,7 +21,6 @@ const Login = () => {
   const [mfaToken, setMfaToken] = useState('');
   const { login, verifyMfa } = useAuth();
   const navigate = useNavigate();
-  const { QRCodeSVG } = require('qrcode.react');
 
   const loginSchema = z.object({
     email: z.string().email(t('email_error') || 'Email invalide'),
@@ -72,7 +72,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
     try {
-      const response = await verifyMfa(mfaUserId, mfaToken);
+      const response = await verifyMfa(mfaUserId, mfaToken, mfaSetupData?.secret);
       const { role, is_profile_completed } = response.user;
       if (!is_profile_completed) {
         navigate('/onboarding');

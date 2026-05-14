@@ -27,15 +27,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
-    if (!res.data.mfa_required) {
+    if (!res.data.mfa_required && !res.data.mfa_setup_required) {
       localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
     }
     return res.data;
   };
 
-  const verifyMfa = async (userId, token) => {
-    const res = await api.post('/auth/mfa/verify-login', { userId, token });
+  const verifyMfa = async (userId, token, secret) => {
+    const res = await api.post('/auth/mfa/verify-login', { userId, token, secret });
     localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
     return res.data;

@@ -82,8 +82,6 @@ exports.disableMFA = async (req, res) => {
 
 // Initialiser MFA obligatoire (sans authentification préalable, utilisé lors du login)
 exports.initMandatoryMFA = async (req, res) => {
-  const { userId } = req.body;
-  
   if (!userId) {
     return res.status(400).json({ message: "ID utilisateur manquant" });
   }
@@ -95,18 +93,15 @@ exports.initMandatoryMFA = async (req, res) => {
     
     if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-    const secret = user.mfa_secret || otplib.generateSecret();
+    // Always generate a fresh secret - do NOT save it yet
+    const secret = otplib.generateSecret();
     const otpauth = otplib.generateURI({
       issuer: 'ClinicFlow',
       accountName: user.email,
       secret
     });
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { mfa_secret: secret }
-    });
-
+    // Secret is NOT saved to DB here - it's only saved after successful verification
     res.json({ secret, otpauth });
   } catch (error) {
     console.error("MFA_INIT_ERROR:", error);
@@ -116,7 +111,7 @@ exports.initMandatoryMFA = async (req, res) => {
 
 // Verify Login Token (supports both normal login and first-time setup)
 exports.verifyLoginMFA = async (req, res) => {
-  const { token, userId } = req.body;
+  const { token, userId, secret: pendingSecret } = req.body;
   const jwt = require('jsonwebtoken');
 
   try {
@@ -124,14 +119,29 @@ exports.verifyLoginMFA = async (req, res) => {
       where: { id: parseInt(userId) }
     });
 
-    if (!user || !user.mfa_secret) {
-      return res.status(400).json({ message: "MFA non configuré pour cet utilisateur" });
+    if (!user) {
+      return res.status(400).json({ message: "Utilisateur non trouvé" });
     }
 
-    const result = otplib.verifySync({ token, secret: user.mfa_secret });
+    // Use the saved secret (returning user) or the pending secret (first-time setup)
+    const secretToVerify = user.mfa_secret || pendingSecret;
+
+    if (!secretToVerify) {
+      return res.status(400).json({ message: "MFA non configuré" });
+    }
+
+    const result = otplib.verifySync({ token, secret: secretToVerify });
 
     if (!result.valid) {
       return res.status(400).json({ message: "Code MFA invalide" });
+    }
+
+    // If this was a first-time setup, save the secret now
+    if (!user.mfa_secret && pendingSecret) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { mfa_secret: pendingSecret }
+      });
     }
 
     // Generate final token
