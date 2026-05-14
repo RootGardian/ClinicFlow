@@ -128,7 +128,8 @@ const Login = () => {
           )}
         </AnimatePresence>
 
-        {!mfaRequired ? (
+
+        {!mfaRequired && !mfaSetupRequired ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-3">
               <label className="block text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-1">{t('email_label')}</label>
