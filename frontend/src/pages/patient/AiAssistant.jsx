@@ -5,6 +5,7 @@ import { Send, Bot, User, Sparkles, ShieldCheck, ArrowRight, MessageSquare, Cloc
 import { useTranslation } from 'react-i18next';
 import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const AiAssistant = () => {
   const { t, i18n } = useTranslation();
