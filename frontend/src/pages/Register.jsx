@@ -7,6 +7,7 @@ import { Mail, Lock, User, Activity, ArrowRight, Stethoscope, UserRound, ShieldC
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import api from '../utils/api';
 
 const Register = () => {
   const { t } = useTranslation();
@@ -36,14 +37,24 @@ const Register = () => {
       // Auto-login après inscription
       const response = await loginUser(data.email, data.password);
       
-      // Sécurité MFA : Si le MFA est requis (activé par défaut), rediriger vers le login
-      // pour que l'utilisateur puisse configurer son application d'authentification
-      if (response.mfa_required || response.mfa_setup_required) {
+      // Sécurité MFA : Si le MFA est requis (activé par défaut), rediriger vers la configuration
+      if (response.mfa_setup_required) {
+        // Récupérer les données du QR Code pour un passage direct
+        const setupRes = await api.post('/auth/mfa/init-mandatory', { userId: response.userId });
+        
         navigate('/login', { 
           state: { 
-            message: 'Inscription réussie ! Veuillez vous connecter pour configurer votre sécurité 2FA.',
-            email: data.email 
+            message: 'Inscription réussie ! Veuillez scanner ce code pour sécuriser votre compte.',
+            mfaSetupData: setupRes.data,
+            mfaUserId: response.userId
           } 
+        });
+        return;
+      }
+
+      if (response.mfa_required) {
+        navigate('/login', { 
+          state: { mfaRequired: true, mfaUserId: response.userId } 
         });
         return;
       }

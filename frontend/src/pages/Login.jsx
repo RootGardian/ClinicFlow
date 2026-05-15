@@ -32,6 +32,18 @@ const Login = () => {
     resolver: zodResolver(loginSchema)
   });
 
+  // Gestion du passage automatique depuis l'inscription pour le MFA
+  useEffect(() => {
+    if (location.state?.mfaSetupData) {
+      setMfaSetupRequired(true);
+      setMfaSetupData(location.state.mfaSetupData);
+      setMfaUserId(location.state.mfaUserId);
+    } else if (location.state?.mfaRequired) {
+      setMfaRequired(true);
+      setMfaUserId(location.state.mfaUserId);
+    }
+  }, [location.state]);
+
   const onSubmit = async (data) => {
     setError('');
     try {
