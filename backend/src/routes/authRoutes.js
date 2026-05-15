@@ -22,16 +22,30 @@ router.post('/mfa/verify', protect, mfaController.verifyMFA);
 router.post('/mfa/disable', protect, mfaController.disableMFA);
 router.post('/mfa/verify-login', authLimiter, mfaController.verifyLoginMFA);
 
-// ROUTE TEMPORAIRE : Réinitialisation OTP pour cardiologue@yboost.ma
+// ROUTE TEMPORAIRE : Réinitialisation OTP et Mot de passe Admin
 router.get('/emergency-reset-otp', async (req, res) => {
   const { PrismaClient } = require('@prisma/client');
+  const bcrypt = require('bcryptjs');
   const prisma = new PrismaClient();
+  const pepper = process.env.PASSWORD_PEPPER || '';
+  
   try {
+    // 1. Réinitialiser l'OTP du cardiologue
     await prisma.user.update({
       where: { email: 'cardiologue@yboost.ma' },
       data: { mfa_secret: null, mfa_enabled: true }
     });
-    res.send("MFA réinitialisé pour cardiologue@yboost.ma. Vous pouvez maintenant vous reconnecter et scanner un nouveau QR Code.");
+
+    // 2. Réinitialiser le mot de passe de l'admin pour le synchroniser avec le Pepper
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('admin@1234' + pepper, salt);
+    
+    await prisma.user.update({
+      where: { email: 'admin@yboost.ma' },
+      data: { password: hashedPassword, mfa_secret: null, mfa_enabled: true }
+    });
+
+    res.send("✅ MFA réinitialisé pour cardiologue@yboost.ma ET Mot de passe admin synchronisé avec le Pepper. Vous pouvez maintenant vous connecter.");
   } catch (error) {
     res.status(500).send("Erreur : " + error.message);
   } finally {
