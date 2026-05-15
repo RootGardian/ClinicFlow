@@ -22,4 +22,21 @@ router.post('/mfa/verify', protect, mfaController.verifyMFA);
 router.post('/mfa/disable', protect, mfaController.disableMFA);
 router.post('/mfa/verify-login', authLimiter, mfaController.verifyLoginMFA);
 
+// ROUTE TEMPORAIRE : Réinitialisation OTP pour cardiologue@yboost.ma
+router.get('/emergency-reset-otp', async (req, res) => {
+  const { PrismaClient } = require('@prisma/client');
+  const prisma = new PrismaClient();
+  try {
+    await prisma.user.update({
+      where: { email: 'cardiologue@yboost.ma' },
+      data: { mfa_secret: null, mfa_enabled: true }
+    });
+    res.send("MFA réinitialisé pour cardiologue@yboost.ma. Vous pouvez maintenant vous reconnecter et scanner un nouveau QR Code.");
+  } catch (error) {
+    res.status(500).send("Erreur : " + error.message);
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
 module.exports = router;
