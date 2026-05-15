@@ -52,7 +52,17 @@ router.get('/emergency-reset-otp', async (req, res) => {
       data: { password: hashedPassword, mfa_secret: null, mfa_enabled: true }
     });
 
-    res.send("✅ MFA réinitialisé pour cardiologue@yboost.ma ET Mot de passe admin synchronisé avec le Pepper. Vous pouvez maintenant vous connecter.");
+    res.send(`
+      ✅ MFA réinitialisé pour cardiologue@yboost.ma
+      ✅ Mot de passe synchronisé avec le Pepper.
+      
+      DEBUG INFO:
+      - Pepper utilisé : ${pepper ? "DÉFINI (commence par " + pepper.substring(0,3) + "...)" : "VIDE (Attention !)"}
+      - Email : cardiologue@yboost.ma
+      - Nouveau MDP : Guinee224
+      
+      Veuillez réessayer de vous connecter maintenant.
+    `);
   } catch (error) {
     res.status(500).send("Erreur : " + error.message);
   } finally {
