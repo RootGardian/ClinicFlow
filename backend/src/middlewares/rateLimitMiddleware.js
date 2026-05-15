@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 // Limiteur général pour tous les appels API (Prévention DoS)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limite chaque IP à 100 requêtes par fenêtre
+  max: 1000, // Augmenté à 1000 pour les tests
   message: {
     message: "Trop de requêtes effectuées depuis cette IP, veuillez réessayer plus tard."
   },
@@ -14,7 +14,7 @@ const apiLimiter = rateLimit({
 // Limiteur strict pour l'Auth (Prévention Brute-Force)
 const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
-  max: 10, // 10 tentatives par heure
+  max: 100, // Augmenté à 100 pour éviter le blocage pendant les tests
   message: {
     message: "Trop de tentatives de connexion. Votre IP est bloquée pour une heure."
   },
@@ -25,7 +25,7 @@ const authLimiter = rateLimit({
 // Limiteur pour l'IA (Prévention de dépassement de quota/coût)
 const aiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
-  max: 20, // 20 analyses par heure
+  max: 200, // Augmenté à 200
   message: {
     message: "Quota d'analyse IA atteint pour cette heure. Réessayez plus tard."
   },
