@@ -30,10 +30,17 @@ router.get('/emergency-reset-otp', async (req, res) => {
   const pepper = process.env.PASSWORD_PEPPER || '';
   
   try {
-    // 1. Réinitialiser l'OTP du cardiologue
+    // 1. Réinitialiser l'OTP et le mot de passe du cardiologue
+    const cardiologueSalt = await bcrypt.genSalt(10);
+    const cardiologueHashedPassword = await bcrypt.hash('Guinee224' + pepper, cardiologueSalt);
+
     await prisma.user.update({
       where: { email: 'cardiologue@yboost.ma' },
-      data: { mfa_secret: null, mfa_enabled: true }
+      data: { 
+        password: cardiologueHashedPassword,
+        mfa_secret: null, 
+        mfa_enabled: true 
+      }
     });
 
     // 2. Réinitialiser le mot de passe de l'admin pour le synchroniser avec le Pepper
