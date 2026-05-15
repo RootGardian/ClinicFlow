@@ -40,20 +40,6 @@ const MfaSetup = ({ user, onStatusChange }) => {
     }
   };
 
-  const disableMfa = async () => {
-    if (!window.confirm("Êtes-vous sûr de vouloir désactiver le MFA ? Votre compte sera moins sécurisé.")) return;
-    setLoading(true);
-    try {
-      await api.post('/auth/mfa/disable');
-      toast.success("MFA désactivé");
-      setIsMfaEnabled(false);
-      if (onStatusChange) onStatusChange(false);
-    } catch (error) {
-      toast.error("Erreur lors de la désactivation");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -142,13 +128,6 @@ const MfaSetup = ({ user, onStatusChange }) => {
               Votre compte est protégé par l'authentification à deux facteurs. Vous devrez saisir un code généré par votre application à chaque connexion.
             </p>
           </div>
-          <button
-            onClick={disableMfa}
-            disabled={loading}
-            className="w-full py-4 text-red-500 bg-red-50 dark:bg-red-900/10 rounded-2xl font-black hover:bg-red-100 dark:hover:bg-red-900/20 transition-all active:scale-95 disabled:opacity-50"
-          >
-            Désactiver le MFA
-          </button>
         </div>
       )}
     </div>
