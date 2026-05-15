@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Activity, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../utils/api';
@@ -21,6 +21,7 @@ const Login = () => {
   const [mfaToken, setMfaToken] = useState('');
   const { login, verifyMfa } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const loginSchema = z.object({
     email: z.string().email(t('email_error') || 'Email invalide'),
@@ -117,6 +118,15 @@ const Login = () => {
         </div>
 
         <AnimatePresence>
+          {location.state?.message && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="mb-8 p-5 bg-green-50 dark:bg-green-900/10 text-green-600 dark:text-green-400 rounded-2xl text-sm font-bold border border-green-100 dark:border-green-800 flex items-center gap-3"
+            >
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+              {location.state.message}
+            </motion.div>
+          )}
           {error && (
             <motion.div 
               initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}

@@ -35,6 +35,19 @@ const Register = () => {
       await signup(data);
       // Auto-login après inscription
       const response = await loginUser(data.email, data.password);
+      
+      // Sécurité MFA : Si le MFA est requis (activé par défaut), rediriger vers le login
+      // pour que l'utilisateur puisse configurer son application d'authentification
+      if (response.mfa_required || response.mfa_setup_required) {
+        navigate('/login', { 
+          state: { 
+            message: 'Inscription réussie ! Veuillez vous connecter pour configurer votre sécurité 2FA.',
+            email: data.email 
+          } 
+        });
+        return;
+      }
+
       const { role, is_profile_completed } = response.user;
 
       if (!is_profile_completed) {
